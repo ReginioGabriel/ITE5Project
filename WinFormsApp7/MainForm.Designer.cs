@@ -1,6 +1,6 @@
 ﻿namespace WinFormsApp7
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -181,7 +181,7 @@
             button5.Name = "button5";
             button5.Size = new Size(75, 23);
             button5.TabIndex = 19;
-            button5.Text = "Play";
+            button5.Text = "Play/Pause";
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
