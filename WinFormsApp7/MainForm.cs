@@ -119,7 +119,7 @@ namespace WinFormsApp7
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
-            
+
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 textBox1.Text = row.Cells[0].Value.ToString();
@@ -207,15 +207,17 @@ namespace WinFormsApp7
         private void button5_Click(object sender, EventArgs e)
         {
 
-            if(currentSong == textBox8.Text && playing == true) //Same song, playing
+            if (currentSong == textBox8.Text && playing == true) //Same song, playing
             {
                 outputDevice?.Pause();
                 playing = false; // pause the song
-            } else if (currentSong == textBox8.Text && playing == false) //Same song, but paused
+            }
+            else if (currentSong == textBox8.Text && playing == false) //Same song, but paused
             {
                 outputDevice?.Play();
                 playing = true; // resume the song
-            } else if (currentSong != textBox8.Text) // different song
+            }
+            else if (currentSong != textBox8.Text) // different song
             {
                 currentSong = textBox8.Text; // update the current song to the new one
                 outputDevice?.Stop();
@@ -237,6 +239,25 @@ namespace WinFormsApp7
 
         private void button6_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+            string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connString))
+                {
+                    conn.Open();
+                    MessageBox.Show("Aiven Cloud is Connected!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Connection Failed: " + ex.Message);
+            }
 
         }
     }

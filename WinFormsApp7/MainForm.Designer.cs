@@ -45,6 +45,7 @@
             textBox8 = new TextBox();
             button5 = new Button();
             button6 = new Button();
+            TestConn = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -187,7 +188,7 @@
             // 
             // button6
             // 
-            button6.Location = new Point(671, 384);
+            button6.Location = new Point(657, 384);
             button6.Name = "button6";
             button6.Size = new Size(75, 23);
             button6.TabIndex = 20;
@@ -195,11 +196,22 @@
             button6.UseVisualStyleBackColor = true;
             button6.Click += button6_Click;
             // 
-            // Form1
+            // TestConn
+            // 
+            TestConn.Location = new Point(744, 451);
+            TestConn.Name = "TestConn";
+            TestConn.Size = new Size(141, 23);
+            TestConn.TabIndex = 21;
+            TestConn.Text = "Test Connection";
+            TestConn.UseVisualStyleBackColor = true;
+            TestConn.Click += button7_Click;
+            // 
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1100, 638);
+            Controls.Add(TestConn);
             Controls.Add(button6);
             Controls.Add(button5);
             Controls.Add(textBox8);
@@ -216,7 +228,7 @@
             Controls.Add(button1);
             Controls.Add(dataGridView1);
             Controls.Add(pictureBox1);
-            Name = "Form1";
+            Name = "MainForm";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -243,5 +255,6 @@
         private TextBox textBox8;
         private Button button5;
         private Button button6;
+        private Button TestConn;
     }
 }
