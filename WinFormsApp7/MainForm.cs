@@ -79,13 +79,14 @@ namespace WinFormsApp7
                 DateTime dateModified = fileInfo.LastWriteTime;
 
                 // ✅ Display results
-                textBox1.Text = $"Title: {title}";
-                textBox2.Text = $"Artist: {artist}";
-                textBox3.Text = $"Album: {album}";
-                textBox4.Text = $"Year: {year}";
-                textBox5.Text = $"Duration: {duration:mm\\:ss}";
-                textBox6.Text = $"File Size: {fileSize / 1024} KB";
-                textBox7.Text = $"Date Created: {dateCreated}";
+                //textBox1.Text = $"Title: {title}";
+                //textBox2.Text = $"Artist: {artist}";
+                //textBox3.Text = $"Album: {album}";
+                //textBox4.Text = $"Year: {year}";
+                textBox7.Text = $"{duration:mm\\:ss}";
+                textBox8.Text = openFileDialog.FileName;
+                //textBox6.Text = $"File Size: {fileSize / 1024} KB";
+                //textBox7.Text = $"Date Created: {dateCreated}";
             }
         }
 
@@ -194,12 +195,13 @@ namespace WinFormsApp7
 
         private void button4_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            btnOpenFile_Click(sender, e); // Reuse the existing file open logic to select a new MP3 file
+            //OpenFileDialog ofd = new OpenFileDialog();
 
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                textBox8.Text = ofd.FileName; // copies full file path to textbox
-            }
+            //if (ofd.ShowDialog() == DialogResult.OK)
+            //{
+              // copies full file path to textbox
+            //}
         }
 
         string currentSong = "";
