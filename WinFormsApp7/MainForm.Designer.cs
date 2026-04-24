@@ -46,6 +46,7 @@
             button5 = new Button();
             button6 = new Button();
             TestConn = new Button();
+            button7 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -77,7 +78,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(153, 399);
+            button1.Location = new Point(135, 399);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 2;
@@ -87,7 +88,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(255, 399);
+            button2.Location = new Point(315, 399);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 3;
@@ -97,7 +98,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(355, 399);
+            button3.Location = new Point(414, 399);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 4;
@@ -206,11 +207,21 @@
             TestConn.UseVisualStyleBackColor = true;
             TestConn.Click += button7_Click;
             // 
+            // button7
+            // 
+            button7.Location = new Point(225, 399);
+            button7.Name = "button7";
+            button7.Size = new Size(75, 23);
+            button7.TabIndex = 22;
+            button7.Text = "Add";
+            button7.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1100, 638);
+            Controls.Add(button7);
             Controls.Add(TestConn);
             Controls.Add(button6);
             Controls.Add(button5);
@@ -256,5 +267,6 @@
         private Button button5;
         private Button button6;
         private Button TestConn;
+        private Button button7;
     }
 }
