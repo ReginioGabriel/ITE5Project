@@ -148,6 +148,8 @@ namespace WinFormsApp7
                             MainForm mainForm = new MainForm();
                             mainForm.Show();
                             this.Hide();
+
+
                         }
                         else
                         {

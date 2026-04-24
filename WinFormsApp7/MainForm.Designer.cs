@@ -46,14 +46,16 @@
             button5 = new Button();
             button6 = new Button();
             TestConn = new Button();
+            groupBox1 = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.asteroid;
-            pictureBox1.Location = new Point(76, 81);
+            pictureBox1.Location = new Point(-172, 22);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(528, 384);
             pictureBox1.TabIndex = 0;
@@ -67,7 +69,7 @@
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(0, 3);
+            dataGridView1.Location = new Point(12, 20);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.Size = new Size(591, 373);
@@ -106,21 +108,21 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(671, 30);
+            textBox1.Location = new Point(59, 34);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(196, 23);
             textBox1.TabIndex = 5;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(671, 59);
+            textBox2.Location = new Point(59, 63);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(196, 23);
             textBox2.TabIndex = 6;
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(671, 101);
+            textBox3.Location = new Point(59, 92);
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(196, 23);
             textBox3.TabIndex = 7;
@@ -128,7 +130,7 @@
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(671, 142);
+            textBox4.Location = new Point(59, 121);
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(196, 23);
             textBox4.TabIndex = 10;
@@ -136,21 +138,21 @@
             // 
             // textBox5
             // 
-            textBox5.Location = new Point(671, 182);
+            textBox5.Location = new Point(59, 150);
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(196, 23);
             textBox5.TabIndex = 9;
             // 
             // textBox6
             // 
-            textBox6.Location = new Point(671, 220);
+            textBox6.Location = new Point(59, 179);
             textBox6.Name = "textBox6";
             textBox6.Size = new Size(196, 23);
             textBox6.TabIndex = 8;
             // 
             // textBox7
             // 
-            textBox7.Location = new Point(671, 261);
+            textBox7.Location = new Point(59, 208);
             textBox7.Name = "textBox7";
             textBox7.Size = new Size(196, 23);
             textBox7.TabIndex = 13;
@@ -161,7 +163,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(697, 340);
+            button4.Location = new Point(703, 397);
             button4.Name = "button4";
             button4.Size = new Size(140, 23);
             button4.TabIndex = 14;
@@ -171,14 +173,14 @@
             // 
             // textBox8
             // 
-            textBox8.Location = new Point(671, 297);
+            textBox8.Location = new Point(59, 237);
             textBox8.Name = "textBox8";
             textBox8.Size = new Size(196, 23);
             textBox8.TabIndex = 15;
             // 
             // button5
             // 
-            button5.Location = new Point(792, 384);
+            button5.Location = new Point(798, 441);
             button5.Name = "button5";
             button5.Size = new Size(75, 23);
             button5.TabIndex = 19;
@@ -188,7 +190,7 @@
             // 
             // button6
             // 
-            button6.Location = new Point(657, 384);
+            button6.Location = new Point(663, 441);
             button6.Name = "button6";
             button6.Size = new Size(75, 23);
             button6.TabIndex = 20;
@@ -198,7 +200,7 @@
             // 
             // TestConn
             // 
-            TestConn.Location = new Point(744, 451);
+            TestConn.Location = new Point(750, 508);
             TestConn.Name = "TestConn";
             TestConn.Size = new Size(141, 23);
             TestConn.TabIndex = 21;
@@ -206,34 +208,45 @@
             TestConn.UseVisualStyleBackColor = true;
             TestConn.Click += button7_Click;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(textBox1);
+            groupBox1.Controls.Add(textBox3);
+            groupBox1.Controls.Add(textBox2);
+            groupBox1.Controls.Add(textBox6);
+            groupBox1.Controls.Add(textBox5);
+            groupBox1.Controls.Add(textBox4);
+            groupBox1.Controls.Add(textBox8);
+            groupBox1.Controls.Add(textBox7);
+            groupBox1.Controls.Add(pictureBox1);
+            groupBox1.Location = new Point(633, 9);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(295, 367);
+            groupBox1.TabIndex = 22;
+            groupBox1.TabStop = false;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1100, 638);
+            Controls.Add(groupBox1);
             Controls.Add(TestConn);
             Controls.Add(button6);
             Controls.Add(button5);
-            Controls.Add(textBox8);
             Controls.Add(button4);
-            Controls.Add(textBox7);
-            Controls.Add(textBox4);
-            Controls.Add(textBox5);
-            Controls.Add(textBox6);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
-            Controls.Add(pictureBox1);
             Name = "MainForm";
             Text = "Form1";
+            FormClosed += MainForm_FormClosed;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -256,5 +269,6 @@
         private Button button5;
         private Button button6;
         private Button TestConn;
+        private GroupBox groupBox1;
     }
 }

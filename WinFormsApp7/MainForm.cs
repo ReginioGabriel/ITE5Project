@@ -11,10 +11,14 @@ namespace WinFormsApp7
     {
         private WaveOutEvent outputDevice;
         private AudioFileReader audioFile;
+        const string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
+
         public MainForm()
         {
             InitializeComponent();
+
         }
+
         private bool IsValidMp3(string filePath)
         {
             try
@@ -41,7 +45,7 @@ namespace WinFormsApp7
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "MP3 Files (.mp3)|.mp3|All Files (.)|*.*";
+            openFileDialog.Filter = "Audio Files (*.mp3;*.wav;*.flac;*.m4a)|*.mp3;*.wav;*.flac;*.m4a|MP3 Files (*.mp3)|*.mp3|WAV Files (*.wav)|*.wav|All Files (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -97,14 +101,14 @@ namespace WinFormsApp7
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string constring = "server=localhost;database=song_db;user id=root;password=050708Gab";
-            using (MySqlConnection con = new MySqlConnection(constring))
+
+            using (MySqlConnection con = new MySqlConnection(connString))
             {
                 try
                 {
                     con.Open();
                     MessageBox.Show("Connection Successful");
-                    string query = "SELECT * FROM songs";
+                    string query = "SELECT * FROM SongsTbl";
                     MySqlCommand cmd = new MySqlCommand(query, con);
                     MySqlDataReader reader = cmd.ExecuteReader();
                     DataTable dt = new DataTable();
@@ -120,20 +124,15 @@ namespace WinFormsApp7
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
-
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            {
-                textBox1.Text = row.Cells[0].Value.ToString();
-                textBox2.Text = row.Cells[1].Value.ToString();
-                textBox3.Text = row.Cells[2].Value.ToString();
-                textBox4.Text = row.Cells[3].Value.ToString();
-                textBox5.Text = row.Cells[4].Value.ToString();
-                textBox6.Text = row.Cells[5].Value.ToString();
-                textBox7.Text = row.Cells[6].Value.ToString();
-                textBox8.Text = row.Cells[7].Value.ToString();
-
-            }
-            //dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+            DataGridViewRow row = dataGridView1.CurrentRow;
+            textBox1.Text = row.Cells[0].Value.ToString();
+            textBox2.Text = row.Cells[1].Value.ToString();
+            textBox3.Text = row.Cells[2].Value.ToString();
+            textBox4.Text = row.Cells[3].Value.ToString();
+            textBox5.Text = row.Cells[4].Value.ToString();
+            textBox6.Text = row.Cells[5].Value.ToString();
+            textBox7.Text = row.Cells[6].Value.ToString();
+            textBox8.Text = row.Cells[7].Value.ToString();
         }
 
         private void textBox4_TextChanged(object sender, EventArgs e)
@@ -149,10 +148,8 @@ namespace WinFormsApp7
         private void button2_Click(object sender, EventArgs e)
         {
 
-            string connString = "server=localhost;database=song_db;uid=root;pwd=050708Gab;";
-
             // 1. Define the SQL Update statement
-            string query = "UPDATE songs SET Title = @val1, Artist = @val2, Album = @val3, Genre = @val4, ReleaseYear = @val5, Duration = @val6, FilePath = @val7 WHERE SongID = @id";
+            string query = "UPDATE SongsTbl SET title = @val1, artist = @val2, album = @val3, genre = @val4, release_date = @val5, language = @val6 WHERE song_id = @id";
 
             using (MySqlConnection conn = new MySqlConnection(connString))
             {
@@ -196,11 +193,11 @@ namespace WinFormsApp7
         private void button4_Click(object sender, EventArgs e)
         {
             btnOpenFile_Click(sender, e); // Reuse the existing file open logic to select a new MP3 file
-            //OpenFileDialog ofd = new OpenFileDialog();
+                                          //OpenFileDialog ofd = new OpenFileDialog();
 
             //if (ofd.ShowDialog() == DialogResult.OK)
             //{
-              // copies full file path to textbox
+            // copies full file path to textbox
             //}
         }
 
@@ -262,5 +259,12 @@ namespace WinFormsApp7
             }
 
         }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit(); // Ensure the entire application closes when the main form is closed
+        }
+
+        
     }
 }
