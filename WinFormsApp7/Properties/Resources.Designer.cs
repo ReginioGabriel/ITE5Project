@@ -73,6 +73,16 @@ namespace WinFormsApp7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _672919195_2165170284268995_7824588291765910815_n {
+            get {
+                object obj = ResourceManager.GetObject("672919195_2165170284268995_7824588291765910815_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap asteroid {
             get {
                 object obj = ResourceManager.GetObject("asteroid", resourceCulture);

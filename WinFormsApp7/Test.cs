@@ -18,8 +18,9 @@ namespace WinFormsApp7
         public btnTestConnection()
         {
             InitializeComponent();
-            LoadTracks();
             Session.CurrentUserId = 1;
+            LoadTracks();
+
         }
 
         private class SongRow
@@ -150,7 +151,10 @@ namespace WinFormsApp7
 
                     // 4. Move Y down for next card (card height 74 + 8px gap)
                     yOffset += 82;
+
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -289,5 +293,91 @@ namespace WinFormsApp7
         {
 
         }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (_selectedSong == null)
+            {
+                MessageBox.Show("Please select a track first.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Move \"{_selectedSong.Title}\" to archive?", "Confirm",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
+
+                // 1. Copy from SongsTbl → ArchivedSongs
+                string insertSql = @"
+            INSERT INTO archiveTBL 
+                (song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path, is_preset, created_at, updated_at)
+            SELECT song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path, is_preset, created_at, updated_at
+            FROM   SongsTbl
+            WHERE  song_id = @id";
+
+                using var insertCmd = new MySqlCommand(insertSql, conn);
+                insertCmd.Parameters.AddWithValue("@id", _selectedSong.SongId);
+                insertCmd.ExecuteNonQuery();
+
+                // 2. Delete from SongsTbl
+                string deleteSql = "DELETE FROM SongsTbl WHERE song_id = @id";
+                using var deleteCmd = new MySqlCommand(deleteSql, conn);
+                deleteCmd.Parameters.AddWithValue("@id", _selectedSong.SongId);
+                deleteCmd.ExecuteNonQuery();
+
+                // 3. Clear right panel
+                _selectedSong = null;
+                lblTrack.Text = "Song";
+                txtArtist.Text = "";
+                txtAlbum.Text = "";
+                txtGenre.Text = "";
+                txtReleaseDate.Text = "";
+                btnEdit.Visible = false;
+                btnSave.Visible = false;
+                btnRemove.Visible = false;
+
+                // 4. Refresh the song list
+                LoadTracks(txtSearch.ForeColor == Color.Gray ? "" : txtSearch.Text.Trim());
+
+                MessageBox.Show($"Track moved to Trash!", "Moved",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to archive:\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        
     }
 }

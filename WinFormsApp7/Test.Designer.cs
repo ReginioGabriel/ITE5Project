@@ -23,6 +23,7 @@
             btnAddTrack = new Button();
             panelLeft = new Panel();
             panelRight = new Panel();
+            btnSave = new Button();
             txtReleaseDate = new TextBox();
             txtGenre = new TextBox();
             txtAlbum = new TextBox();
@@ -61,7 +62,6 @@
             txtCrudDate = new TextBox();
             btnCrudSave = new Button();
             btnCrudCancel = new Button();
-            btnSave = new Button();
             panelTop.SuspendLayout();
             panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNowPlaying).BeginInit();
@@ -115,9 +115,10 @@
             txtSearch.ForeColor = Color.FromArgb(120, 125, 170);
             txtSearch.Location = new Point(260, 14);
             txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search tracks or artists...";
             txtSearch.Size = new Size(380, 25);
             txtSearch.TabIndex = 1;
-            txtSearch.Text = "Search tracks or artists...";
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnSearch
             // 
@@ -132,6 +133,7 @@
             btnSearch.TabIndex = 2;
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = false;
+            btnSearch.Click += btnSearch_Click;
             // 
             // btnAddTrack
             // 
@@ -184,6 +186,20 @@
             panelRight.Name = "panelRight";
             panelRight.Size = new Size(291, 600);
             panelRight.TabIndex = 2;
+            // 
+            // btnSave
+            // 
+            btnSave.BackColor = Color.Gray;
+            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(204, 244);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(64, 27);
+            btnSave.TabIndex = 28;
+            btnSave.Text = "💾 Save";
+            btnSave.UseVisualStyleBackColor = false;
             // 
             // txtReleaseDate
             // 
@@ -258,6 +274,7 @@
             btnEdit.TabIndex = 22;
             btnEdit.Text = "🖉 Edit";
             btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += btnEdit_Click;
             // 
             // btnRemove
             // 
@@ -272,6 +289,7 @@
             btnRemove.TabIndex = 21;
             btnRemove.Text = "🗑 Remove";
             btnRemove.UseVisualStyleBackColor = false;
+            btnRemove.Click += btnRemove_Click;
             // 
             // lblNowPlaying
             // 
@@ -646,20 +664,6 @@
             btnCrudCancel.TabIndex = 18;
             btnCrudCancel.Text = "✕ Cancel";
             btnCrudCancel.UseVisualStyleBackColor = false;
-            // 
-            // btnSave
-            // 
-            btnSave.BackColor = Color.Gray;
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(204, 244);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(64, 27);
-            btnSave.TabIndex = 28;
-            btnSave.Text = "💾 Save";
-            btnSave.UseVisualStyleBackColor = false;
             // 
             // btnTestConnection
             // 
