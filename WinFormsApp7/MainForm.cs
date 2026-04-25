@@ -1,4 +1,5 @@
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 using NAudio.Wave;
 using System.Data;
 using System.IO;
@@ -6,211 +7,569 @@ using System.Threading;
 using System.Xml.Linq;
 using TagLib;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using static WinFormsApp7.Program;
+
 namespace WinFormsApp7
 {
-
     public partial class MainForm : Form
     {
-        private WaveOutEvent? outputDevice;
-        private AudioFileReader? audioFile;
         const string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
-        private readonly MySqlConnection con = new(connString);
 
+        private SongRow _selectedSong = null;
+
+        //Audio Controls
+        private WaveOutEvent outputDevice;
+        private AudioFileReader audioFile;
+        private SongRow _currentlyPlayingSong;
+
+
+        private FlowLayoutPanel flowPanel;
         public MainForm()
         {
             InitializeComponent();
-            LoadTable(); // Load data into DataGridView on form load
+            Session.CurrentUserId = 1;
 
-            releaseDatePicker.CustomFormat = " "; // Hides the date first in the screen
+            // Create inner flow panel once — never recreate it
+            flowPanel = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Width = panelLeft.Width - 20,
+                BackColor = panelLeft.BackColor,
+                Location = new Point(0, 0),
+                Padding = new Padding(15, 15, 0, 15)
+            };
+
+            panelLeft.AutoScroll = true;
+            panelLeft.Controls.Add(flowPanel);
+
+            LoadTracks();
         }
 
-        private void LoadTable()
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            StopAndDisposeAudio();
+            base.OnFormClosing(e);
+        }
+
+        private class SongRow
+        {
+            public int SongId { get; set; }
+            public string Title { get; set; }
+            public string Artist { get; set; }
+            public string Album { get; set; }
+            public string Genre { get; set; }
+            public string Duration { get; set; }
+            public string FilePath { get; set; }
+            public bool IsPreset { get; set; }
+            public string Language { get; set; }
+            public DateTime? ReleaseDate { get; set; }
+        }
+
+        #region Song Build Functions
+        private void LoadTracks(string searchTerm = "")
+        {
+            StopAndDisposeAudio();
+            flowPanel.Controls.Clear();
+
+            string query = @"
+            SELECT s.song_id, s.title, s.artist, s.album, s.genre, s.language,
+                   s.release_date, s.duration, s.file_path, s.is_preset
+            FROM SongsTbl s
+            LEFT JOIN HiddenPresetSongs h
+                   ON h.song_id = s.song_id
+                  AND h.user_id = @uid
+            WHERE
+                (
+                    (s.is_preset = 1 AND h.song_id IS NULL)
+                    OR
+                    (s.user_id = @uid)
+                )
+                AND (s.title LIKE @search OR s.artist LIKE @search)
+            ORDER BY s.is_preset DESC, s.title ASC";
 
             try
             {
+                using var con = new MySqlConnection(connString);
                 con.Open();
-                string query = "SELECT * FROM SongsTbl";
-                MySqlCommand cmd = new MySqlCommand(query, con);
-                MySqlDataReader reader = cmd.ExecuteReader();
-                DataTable dt = new DataTable();
-                dt.Load(reader);
-                dataGridView1.DataSource = dt;
+
+                using var cmd = new MySqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+                cmd.Parameters.AddWithValue("@search", $"%{searchTerm}%");
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var song = new SongRow
+                    {
+                        SongId = reader.GetInt32("song_id"),
+                        Title = reader.IsDBNull(reader.GetOrdinal("title")) ? "N/A" : reader.GetString("title"),
+                        Artist = reader.IsDBNull(reader.GetOrdinal("artist")) ? "N/A" : reader.GetString("artist"),
+                        Album = reader.IsDBNull(reader.GetOrdinal("album")) ? "N/A" : reader.GetString("album"),
+                        Genre = reader.IsDBNull(reader.GetOrdinal("genre")) ? "N/A" : reader.GetString("genre"),
+                        Language = reader.IsDBNull(reader.GetOrdinal("language")) ? "N/A" : reader.GetString("language"),
+                        ReleaseDate = reader.IsDBNull(reader.GetOrdinal("release_date"))
+                            ? (DateTime?)null
+                            : reader.GetDateTime("release_date"),
+                        Duration = reader.IsDBNull(reader.GetOrdinal("duration")) ? "N/A" : reader.GetString("duration"),
+                        FilePath = reader.IsDBNull(reader.GetOrdinal("file_path")) ? "" : reader.GetString("file_path"),
+                        IsPreset = reader.GetBoolean("is_preset")
+                    };
+
+                    flowPanel.Controls.Add(BuildSongCard(song));
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show($"Failed to load tracks:\n{ex.Message}", "DB Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-//DATAGRID
-        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        private Panel BuildSongCard(SongRow song)
         {
-            releaseDatePicker.Format = DateTimePickerFormat.Short; //Show the date into the screen
+            var card = new Panel
+            {
+                BackColor = Color.FromArgb(50, 53, 90),
+                Size = new Size(730, 74),
+                Margin = new Padding(0, 0, 0, 8),  // 8px gap between cards
+                Tag = song
+            };
 
-            DataGridViewRow row = dataGridView1.CurrentRow;
-            if (row == null) return;
+            // Track name
+            var lblName = new Label
+            {
+                Text = song.Title,
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Size = new Size(460, 24),
+                Location = new Point(20, 12)
+            };
 
-            LoadSongFromRow(row);
+            // Artist
+            var lblArtist = new Label
+            {
+                Text = song.Artist,
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.FromArgb(160, 165, 210),
+                BackColor = Color.Transparent,
+                Size = new Size(300, 18),
+                Location = new Point(20, 38)
+            };
+
+            // Duration / Format
+            var lblDuration = new Label
+            {
+                Text = song.Duration,
+                Font = new Font("Segoe UI", 10f),
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Size = new Size(60, 22),
+                Location = new Point(630, 26),
+                TextAlign = ContentAlignment.MiddleRight
+            };
+
+
+            card.Controls.AddRange(new Control[]
+                {lblName, lblArtist, lblDuration});
+
+            card.Click += (s, e) => ShowSongDetails(song);
+            foreach (Control ctrl in card.Controls)
+                ctrl.Click += (s, e) => ShowSongDetails(song);
+
+            return card;
         }
 
-        private void LoadSongFromRow(DataGridViewRow row)
+        private void ShowSongDetails(SongRow song)
         {
-            songIDTxt.Text = GetCellText(row, "song_id");
-            userID_Txt.Text = GetCellText(row, "user_id");
-            songNameTxt.Text = GetCellText(row, "title");
-            artistNameTxt.Text = GetCellText(row, "artist");
-            albumNameTxt.Text = GetCellText(row, "album");
-            genreTxt.Text = GetCellText(row, "genre");
-            languageTxt.Text = GetCellText(row, "language");
-            filepathTxt.Text = GetCellText(row, "file_path");
 
-            if (DateTime.TryParse(GetCellText(row, "release_date"), out var releaseDate))
-                releaseDatePicker.Value = releaseDate;
+            if (song == null) return;
+
+            _selectedSong = song;
+
+            // Populate right panel labels
+            lblTrack.Text = song.Title;
+            txtArtist.Text = song.Artist;
+            txtAlbum.Text = song.Album;
+            txtGenre.Text = song.Genre;
+            txtLanguage.Text = song.Language;
+            lblDuration.Text = song.Duration;
+
+
+            dtpReleaseDate.Visible = true;
+            dtpReleaseDate.Format = DateTimePickerFormat.Custom;
+
+            if (song.ReleaseDate.HasValue)
+            {
+                dtpReleaseDate.Checked = true;
+                dtpReleaseDate.CustomFormat = "MM/dd/yy";
+                dtpReleaseDate.Value = song.ReleaseDate.Value;
+            }
+            else
+            {
+                dtpReleaseDate.Checked = false;
+                dtpReleaseDate.CustomFormat = " ";
+                dtpReleaseDate.Value = DateTime.Today;
+            }
+
+            SetEditMode(false);
+            btnPlayPause.Enabled = true;
         }
 
-        private string GetCellText(DataGridViewRow row, string columnName)
+        private void SetEditMode(bool editing)
         {
-            return row.Cells[columnName].Value?.ToString() ?? string.Empty;
+            lblTrack.ReadOnly = !editing;
+            txtArtist.ReadOnly = !editing;
+            txtAlbum.ReadOnly = !editing;
+            txtGenre.ReadOnly = !editing;
+            txtLanguage.ReadOnly = !editing;
+
+            dtpReleaseDate.Enabled = editing;
+            btnSave.Visible = editing;
         }
 
 
+        #endregion
 
-// BUTTONS
-        private void editBtn_Click(object sender, EventArgs e)
+        #region Add Track Button
+        private void btnAddTrack_Click(object sender, EventArgs e)
         {
+            using var dialog = new OpenFileDialog
+            {
+                Title = "Select a Song",
+                Filter = "Audio Files|*.mp3;*.wav;*.flac;*.aac;*.m4a|All Files|*.*"
+            };
 
-            // 1. Define the SQL Update statement
-            string query = "UPDATE SongsTbl SET title = @val1, artist = @val2, album = @val3, genre = @val4, release_date = @val5, language = @val6, user_id = @val7, file_path = @val8 WHERE song_id = @id";
-            MySqlCommand cmd = new MySqlCommand(query, con);
+            if (dialog.ShowDialog() != DialogResult.OK) return;
 
-
-            // 2. Map Textboxes to the parameters
-            cmd.Parameters.AddWithValue("@val1", songNameTxt.Text);
-            cmd.Parameters.AddWithValue("@val2", artistNameTxt.Text);
-            cmd.Parameters.AddWithValue("@val3", albumNameTxt.Text);
-            cmd.Parameters.AddWithValue("@val4", genreTxt.Text);
-            cmd.Parameters.AddWithValue("@val5", releaseDatePicker.Value.Date);
-            cmd.Parameters.AddWithValue("@val6", languageTxt.Text);
-            cmd.Parameters.AddWithValue("@val7", userID_Txt.Text);
-            cmd.Parameters.AddWithValue("@val8", filepathTxt.Text);
-            cmd.Parameters.AddWithValue("@id", songIDTxt.Text); // The Primary Key is vital!
+            string sourceFilePath = dialog.FileName;
+            string extension = Path.GetExtension(sourceFilePath);
+            string newFileName = $"{Session.CurrentUserId}_{Guid.NewGuid()}{extension}";
+            string destPath = Path.Combine(AppConfig.SongsFolder, newFileName);
 
             try
             {
-                con.Open();
-                int rows = cmd.ExecuteNonQuery();
+                // ── 1. Read metadata from the file using TagLib ──────────────
+                string autoTitle = "N/A";
+                string autoArtist = "N/A";
+                string autoAlbum = "N/A";
+                string autoGenre = "N/A";
+                string autoDuration = "N/A";
 
-                if (rows > 0)
+                using (var tagFile = TagLib.File.Create(sourceFilePath))
                 {
-                    LoadTable(); // Refresh the DataGridView to show updated data
+                    // Duration → format as m:ss (e.g. 4:05)
+                    TimeSpan dur = tagFile.Properties.Duration;
+                    autoDuration = dur.TotalSeconds > 0
+                        ? $"{(int)dur.TotalMinutes}:{dur.Seconds:D2}"
+                        : "N/A";
+
+                    // Title — fall back to filename if tag is empty
+                    autoTitle = string.IsNullOrWhiteSpace(tagFile.Tag.Title)
+                        ? Path.GetFileNameWithoutExtension(sourceFilePath)
+                        : tagFile.Tag.Title;
+
+                    // Artist
+                    autoArtist = tagFile.Tag.Performers?.Length > 0
+                        && !string.IsNullOrWhiteSpace(tagFile.Tag.Performers[0])
+                        ? tagFile.Tag.Performers[0]
+                        : "N/A";
+
+                    // Album
+                    autoAlbum = string.IsNullOrWhiteSpace(tagFile.Tag.Album)
+                        ? "N/A"
+                        : tagFile.Tag.Album;
+
+                    // Genre
+                    autoGenre = tagFile.Tag.Genres?.Length > 0
+                        && !string.IsNullOrWhiteSpace(tagFile.Tag.Genres[0])
+                        ? tagFile.Tag.Genres[0]
+                        : "N/A";
                 }
+
+                // ── 2. Copy file to AppData ───────────────────────────────────
+                Directory.CreateDirectory(AppConfig.SongsFolder);
+                System.IO.File.Copy(sourceFilePath, destPath);
+
+                // ── 3. Save to database ───────────────────────────────────────
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
+
+                string sql = @"
+            INSERT INTO SongsTbl 
+                (user_id, title, artist, album, genre, duration, file_path, is_preset)
+            VALUES 
+                (@uid, @title, @artist, @album, @genre, @duration, @filepath, 0)";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+                cmd.Parameters.AddWithValue("@title", autoTitle);
+                cmd.Parameters.AddWithValue("@artist", autoArtist);
+                cmd.Parameters.AddWithValue("@album", autoAlbum);
+                cmd.Parameters.AddWithValue("@genre", autoGenre);
+                cmd.Parameters.AddWithValue("@duration", autoDuration);
+                cmd.Parameters.AddWithValue("@filepath", newFileName);
+                cmd.ExecuteNonQuery();
+
+                MessageBox.Show(
+                    $"✅ Track added!\n\nTitle: {autoTitle}\nArtist: {autoArtist}\nAlbum: {autoAlbum}\nDuration: {autoDuration}\nRelease Date: N/A \n\nYou can edit the details by clicking the song.",
+                    "Track Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // ── 4. Refresh list ───────────────────────────────────────────
+                LoadTracks();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                if (System.IO.File.Exists(destPath))
+                    System.IO.File.Delete(destPath);
+
+                MessageBox.Show($"Failed to add track:\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        #endregion
 
-        private bool IsValidMp3(string filePath)
+        #region Remove Track Button
+        private void btnRemove_Click_1(object sender, EventArgs e)
         {
+            if (_selectedSong == null)
+            {
+                MessageBox.Show("Please select a song first.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            RemoveTrack(_selectedSong);
+        }
+
+        private void RemoveTrack(SongRow song)
+        {
+            if (song == null) return;
+
+            string message = song.IsPreset
+                ? $"Hide preset song \"{song.Title}\" from your list?"
+                : $"Delete \"{song.Title}\" from your library?\nThis cannot be undone.";
+
+            var confirm = MessageBox.Show(
+                message,
+                "Confirm Remove",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirm != DialogResult.Yes) return;
+
             try
             {
-                byte[] header = new byte[3];
-                using (var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
+
+                if (song.IsPreset)
                 {
-                    fs.Read(header, 0, 3);
+                    string sql = @"
+                INSERT IGNORE INTO HiddenPresetSongs (user_id, song_id)
+                VALUES (@uid, @songid)";
+
+                    using var cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+                    cmd.Parameters.AddWithValue("@songid", song.SongId);
+                    cmd.ExecuteNonQuery();
+
+                    MessageBox.Show("Preset song hidden from your list.", "Hidden",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    string sql = @"
+                DELETE FROM SongsTbl
+                WHERE song_id = @songid
+                  AND user_id = @uid";
+
+                    using var cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@songid", song.SongId);
+                    cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+                    cmd.ExecuteNonQuery();
+
+                    if (!string.IsNullOrWhiteSpace(song.FilePath))
+                    {
+                        string fullPath = Path.Combine(AppConfig.SongsFolder, song.FilePath);
+                        if (System.IO.File.Exists(fullPath))
+                            System.IO.File.Delete(fullPath);
+                    }
+
+                    MessageBox.Show("Track deleted successfully.", "Deleted",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
-                // Check for ID3 tag header: 0x49 0x44 0x33 = "ID3"
-                bool hasId3Header = header[0] == 0x49 && header[1] == 0x44 && header[2] == 0x33;
-
-                // Check for raw MPEG frame sync: 0xFF 0xFB or 0xFF 0xFA
-                bool hasMpegSync = header[0] == 0xFF && (header[1] == 0xFB || header[1] == 0xFA || header[1] == 0xF3);
-
-                return hasId3Header || hasMpegSync;
+                _selectedSong = null;
+                LoadTracks();
+                ClearSongDetails();
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                MessageBox.Show($"Remove failed:\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private void button4_Click(object sender, EventArgs e)
+        private void ClearSongDetails()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Audio Files (*.mp3;*.wav;*.flac;*.m4a)|*.mp3;*.wav;*.flac;*.m4a|MP3 Files (*.mp3)|*.mp3|WAV Files (*.wav)|*.wav|All Files (*.*)|*.*";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string filePath = openFileDialog.FileName;
-
-                // ✅ Step 1: Validate the file is truly an MP3 (see below)
-                if (!IsValidMp3(filePath))
-                {
-                    MessageBox.Show("The selected file is not a valid MP3 file.", "Invalid File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                string sourcePath = openFileDialog.FileName; // original file location
-                string resourcesFolder = Path.Combine(Application.StartupPath, "Resources");
-
-                // Create Resources folder if it doesn't exist
-                if (!Directory.Exists(resourcesFolder))
-                    Directory.CreateDirectory(resourcesFolder);
-
-                // Copy file into Resources folder
-                string fileName = Path.GetFileName(sourcePath);
-                string destPath = Path.Combine(resourcesFolder, fileName);
-
-                System.IO.File.Copy(sourcePath, destPath, overwrite: true);
-
-                // Set the textbox to the new path
-                filepathTxt.Text = destPath;
-            }
+            lblTrack.Text = "No song selected";
+            txtArtist.Clear();
+            txtAlbum.Clear();
+            txtGenre.Clear();
+            dtpReleaseDate.CustomFormat = " ";
         }
 
-        string currentSong = "";
-        bool playing = true;
+        #endregion
+
+        #region Play/Pause Buttons
         private void btnPlayPause_Click(object sender, EventArgs e)
         {
-            if (currentSong == filepathTxt.Text && playing == true) //Same song, playing
+            if (_selectedSong == null)
             {
-                outputDevice?.Pause();
-                playing = false; // pause the song
+                MessageBox.Show("Please select a song first.", "No Song Selected",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-            else if (currentSong == filepathTxt.Text && playing == false) //Same song, but paused
-            {
-                outputDevice?.Play();
-                playing = true; // resume the song
-            }
-            else if (currentSong != filepathTxt.Text && !string.IsNullOrEmpty(filepathTxt.Text)) // different song
-            {
-                currentSong = filepathTxt.Text; // update the current song to the new one
-                outputDevice?.Stop();
-                outputDevice?.Dispose();
-                audioFile?.Dispose();
 
-                Thread.Sleep(100);
-                audioFile = new AudioFileReader(filepathTxt?.Text);
+            string fullPath = GetSongFullPath(_selectedSong);
+
+            if (string.IsNullOrWhiteSpace(fullPath) || !System.IO.File.Exists(fullPath))
+            {
+                MessageBox.Show("Song file not found.", "Missing File",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                if (_currentlyPlayingSong != null &&
+                    _currentlyPlayingSong.SongId == _selectedSong.SongId &&
+                    outputDevice != null)
+                {
+                    if (outputDevice.PlaybackState == PlaybackState.Playing)
+                    {
+                        outputDevice.Pause();
+                        btnPlayPause.Text = "▶";
+                        return;
+                    }
+
+                    if (outputDevice.PlaybackState == PlaybackState.Paused)
+                    {
+                        outputDevice.Play();
+                        btnPlayPause.Text = "⏸";
+                        return;
+                    }
+                }
+
+                StopAndDisposeAudio();
+
+                audioFile = new AudioFileReader(fullPath);
                 outputDevice = new WaveOutEvent();
                 outputDevice.Init(audioFile);
+                outputDevice.PlaybackStopped += OutputDevice_PlaybackStopped;
                 outputDevice.Play();
+
+                _currentlyPlayingSong = _selectedSong;
+                btnPlayPause.Text = "⏸";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Playback failed:\n{ex.Message}", "Audio Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void waveformPainter3_Click(object sender, EventArgs e)
+        private string GetSongFullPath(SongRow song)
         {
+            if (song == null || string.IsNullOrWhiteSpace(song.FilePath))
+                return null;
 
+            if (song.IsPreset)
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "presets", song.FilePath);
+
+            return Path.Combine(AppConfig.SongsFolder, song.FilePath);
         }
 
-        private void btnArchive_Click(object sender, EventArgs e)
+        //Cleanup helper
+        private void StopAndDisposeAudio()
         {
+            if (outputDevice != null)
+            {
+                outputDevice.PlaybackStopped -= OutputDevice_PlaybackStopped;
+                outputDevice.Stop();
+                outputDevice.Dispose();
+                outputDevice = null;
+            }
 
+            if (audioFile != null)
+            {
+                audioFile.Dispose();
+                audioFile = null;
+            }
+
+            _currentlyPlayingSong = null;
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        //When the song finishes naturally, reset the button
+        private void OutputDevice_PlaybackStopped(object sender, StoppedEventArgs e)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => OutputDevice_PlaybackStopped(sender, e)));
+                return;
+            }
 
+            btnPlayPause.Text = "▶";
+
+            if (audioFile != null && audioFile.Position >= audioFile.Length)
+            {
+                StopAndDisposeAudio();
+            }
+        }
+
+
+        #endregion
+
+        #region Search Button
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string keyword = txtSearch.Text.Trim();
+
+            _selectedSong = null;
+            ClearSongDetails();
+            LoadTracks(keyword);
+        }
+        #endregion
+
+        #region Edit Btn
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (_selectedSong == null)
+            {
+                MessageBox.Show("Please select a song first.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (_selectedSong.IsPreset)
+            {
+                MessageBox.Show("Preset songs cannot be edited.", "Not Allowed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            SetEditMode(true);
+            dtpReleaseDate.Format = DateTimePickerFormat.Short;
+            txtArtist.Focus();
+        }
+        #endregion
+
+        #region Test Connection Btn
+        private void btnTest_Click(object sender, EventArgs e)
+        {
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(connString))
@@ -223,117 +582,91 @@ namespace WinFormsApp7
             {
                 MessageBox.Show("Connection Failed: " + ex.Message);
             }
-
         }
+        #endregion
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit(); // Ensure the entire application closes when the main form is closed
-        }
-
-        private void textBox8_TextChanged(object sender, EventArgs e)
+        #region Save Button
+        private void btnSave_Click(object sender, EventArgs e)
         {
 
-        }
+            string title = lblTrack.Text.Trim();
+            string artist = txtArtist.Text.Trim();
+            string album = txtAlbum.Text.Trim();
+            string genre = txtGenre.Text.Trim();
+            string language = txtLanguage.Text.Trim();
 
-        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridViewRow row = dataGridView1.CurrentRow;
-            songIDTxt.Text = row.Cells[0].Value.ToString();
-            songNameTxt.Text = row.Cells[1].Value.ToString();
-            artistNameTxt.Text = row.Cells[2].Value.ToString();
-            albumNameTxt.Text = row.Cells[3].Value.ToString();
-            genreTxt.Text = row.Cells[4].Value.ToString();
-            releaseDatePicker.Value = Convert.ToDateTime(row.Cells[5].Value);
-            languageTxt.Text = row.Cells[6].Value.ToString();
-            userID_Txt.Text = row.Cells[9].Value.ToString();
-            filepathTxt.Text = row.Cells[10].Value.ToString();
-        }
+            
 
-        int createCounter = 0;
-
-        private void createBtn_Click(object sender, EventArgs e)
-        {
-            if (createCounter == 0)
+            if (string.IsNullOrWhiteSpace(title))
             {
-                DialogResult result = MessageBox.Show("Create another Record?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                MessageBox.Show("Title is required.", "Validation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                lblTrack.Focus();
+                return;
+            }
 
-                if (result == DialogResult.Yes)
+            object releaseDateValue = dtpReleaseDate.Checked
+                ? dtpReleaseDate.Value.Date
+                : DBNull.Value;
+
+            string query = @"
+                UPDATE SongsTbl
+                SET
+                    title = @title,
+                    artist = @artist,
+                    album = @album,
+                    genre = @genre,
+                    language = @language,
+                    release_date = @release_date
+                WHERE song_id = @song_id
+                  AND user_id = @user_id
+                  AND is_preset = 0";
+
+            try
+            {
+                using var conn = new MySqlConnection(connString);
+                using var cmd = new MySqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@title", title);
+                cmd.Parameters.AddWithValue("@artist", string.IsNullOrWhiteSpace(artist) ? DBNull.Value : artist);
+                cmd.Parameters.AddWithValue("@album", string.IsNullOrWhiteSpace(album) ? DBNull.Value : album);
+                cmd.Parameters.AddWithValue("@genre", string.IsNullOrWhiteSpace(genre) ? DBNull.Value : genre);
+                cmd.Parameters.AddWithValue("@language", string.IsNullOrWhiteSpace(language) ? DBNull.Value : language);
+                cmd.Parameters.AddWithValue("@release_date", releaseDateValue);
+                cmd.Parameters.AddWithValue("@song_id", _selectedSong.SongId);
+                cmd.Parameters.AddWithValue("@user_id", Session.CurrentUserId);
+
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0)
                 {
-                    createCounter++;
-                    // Clear textboxes for new entry
-                    songIDTxt.Clear();
-                    songNameTxt.Clear();
-                    artistNameTxt.Clear();
-                    albumNameTxt.Clear();
-                    genreTxt.Clear();
-                    releaseDatePicker.Value = DateTime.Now;
-                    languageTxt.Clear();
-                    userID_Txt.Clear();
-                    filepathTxt.Clear();
-                    userID_Txt.ReadOnly = false; // Allow user to enter new user ID
-                    MessageBox.Show("Fill up the form and then click the create button to confirm");
+                    _selectedSong.Title = title;
+                    _selectedSong.Artist = artist;
+                    _selectedSong.Album = album;
+                    _selectedSong.Genre = genre;
+                    _selectedSong.Language = language;
+                    _selectedSong.ReleaseDate = dtpReleaseDate.Checked ? dtpReleaseDate.Value.Date : (DateTime?)null;
+
+                    MessageBox.Show("Song updated successfully.", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    SetEditMode(false);
+                    LoadTracks();
                 }
                 else
                 {
-                    return; // Exit the method if user chooses not to create another record
+                    MessageBox.Show("No record was updated. The song may not belong to this user.",
+                        "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-            else if (createCounter == 1)
+            catch (Exception ex)
             {
-                if (string.IsNullOrWhiteSpace(songNameTxt.Text) || string.IsNullOrWhiteSpace(artistNameTxt.Text) || string.IsNullOrWhiteSpace(albumNameTxt.Text) ||
-                    string.IsNullOrWhiteSpace(genreTxt.Text) || string.IsNullOrWhiteSpace(languageTxt.Text))
-                {
-                    MessageBox.Show("Please fill in all fields before creating a record.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                string query = "INSERT INTO SongsTbl (title, artist, album, genre, release_date, language, user_id, file_path) VALUES (@val1, @val2, @val3, @val4, @val5, @val6, @val7, @val8)";
-
-                using (MySqlConnection conn = new MySqlConnection(connString))
-                {
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                    {
-                        // 2. Map Textboxes to the parameters
-                        cmd.Parameters.AddWithValue("@val1", songNameTxt.Text);
-                        cmd.Parameters.AddWithValue("@val2", artistNameTxt.Text);
-                        cmd.Parameters.AddWithValue("@val3", albumNameTxt.Text);
-                        cmd.Parameters.AddWithValue("@val4", genreTxt.Text);
-                        cmd.Parameters.AddWithValue("@val5", releaseDatePicker.Value.Date);
-                        cmd.Parameters.AddWithValue("@val6", languageTxt.Text);
-                        cmd.Parameters.AddWithValue("@val7", userID_Txt.Text);
-                        cmd.Parameters.AddWithValue("@val8", filepathTxt.Text);
-                        cmd.Parameters.AddWithValue("@id", songIDTxt.Text); // The Primary Key is vital!
-
-                        try
-                        {
-                            conn.Open();
-                            int rows = cmd.ExecuteNonQuery();
-
-                            if (rows > 0)
-                            {
-                                LoadTable(); // Refresh the DataGridView to show updated data
-                                songIDTxt.Clear();
-                                songNameTxt.Clear();
-                                artistNameTxt.Clear();
-                                albumNameTxt.Clear();
-                                genreTxt.Clear();
-                                releaseDatePicker.Value = DateTime.Now;
-                                languageTxt.Clear();
-                                userID_Txt.Clear();
-                                filepathTxt.Clear();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error: " + ex.Message);
-                        }
-                    }
-                }
+                //MessageBox.Show($"Failed to update song:\n{ex.Message}", "Database Error",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.ToString(), "Full Error");
             }
         }
-
-        private void releaseDatePicker_ValueChanged(object sender, EventArgs e)
-        {
-        }
+        #endregion
     }
 }

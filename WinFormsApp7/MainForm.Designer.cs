@@ -1,253 +1,759 @@
-﻿namespace WinFormsApp7
+﻿using Org.BouncyCastle.Asn1.Crmf;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace WinFormsApp7
 {
     partial class MainForm
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
+            panelTop = new Panel();
+            btnTest = new Button();
+            lblLogo = new Label();
+            txtSearch = new TextBox();
+            btnSearch = new Button();
+            btnAddTrack = new Button();
+            panelLeft = new Panel();
+            panelRight = new Panel();
+            txtLanguage = new TextBox();
+            lblLanguage = new Label();
+            dtpReleaseDate = new DateTimePicker();
+            btnSave = new Button();
+            txtGenre = new TextBox();
+            txtAlbum = new TextBox();
+            txtArtist = new TextBox();
+            lblDuration = new Label();
             btnEdit = new Button();
-            songIDTxt = new TextBox();
-            songNameTxt = new TextBox();
-            artistNameTxt = new TextBox();
-            albumNameTxt = new TextBox();
-            genreTxt = new TextBox();
-            languageTxt = new TextBox();
-            openFileDialog1 = new OpenFileDialog();
-            btnCreate = new Button();
-            userID_Txt = new TextBox();
+            btnRemove = new Button();
+            lblNowPlaying = new Label();
+            picNowPlaying = new PictureBox();
+            lblArtist = new Label();
+            lblAlbum = new Label();
+            lblGenre = new Label();
+            lblReleaseDate = new Label();
+            trackBar = new TrackBar();
             btnPlayPause = new Button();
-            archiveBtn = new Button();
-            TestConn = new Button();
-            groupBox1 = new GroupBox();
-            releaseDatePicker = new DateTimePicker();
-            filepathTxt = new TextBox();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            groupBox1.SuspendLayout();
+            panelCrud = new Panel();
+            lblCrudTitle = new Label();
+            lblCrudTrackName = new Label();
+            txtCrudTrackName = new TextBox();
+            lblCrudArtist = new Label();
+            txtCrudArtist = new TextBox();
+            lblCrudDuration = new Label();
+            txtCrudDuration = new TextBox();
+            lblCrudAlbum = new Label();
+            txtCrudAlbum = new TextBox();
+            lblCrudGenre = new Label();
+            txtCrudGenre = new TextBox();
+            lblCrudBpm = new Label();
+            txtCrudBpm = new TextBox();
+            lblCrudFormat = new Label();
+            txtCrudFormat = new TextBox();
+            lblCrudDate = new Label();
+            txtCrudDate = new TextBox();
+            btnCrudSave = new Button();
+            btnCrudCancel = new Button();
+            lblTrack = new TextBox();
+            panelTop.SuspendLayout();
+            panelRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picNowPlaying).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
+            panelCrud.SuspendLayout();
             SuspendLayout();
             // 
-            // dataGridView1
+            // panelTop
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 20);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(421, 246);
-            dataGridView1.TabIndex = 1;
-            dataGridView1.CellContentDoubleClick += dataGridView1_CellContentDoubleClick;
-            dataGridView1.DoubleClick += dataGridView1_DoubleClick;
+            panelTop.BackColor = Color.FromArgb(26, 27, 50);
+            panelTop.Controls.Add(btnTest);
+            panelTop.Controls.Add(lblLogo);
+            panelTop.Controls.Add(txtSearch);
+            panelTop.Controls.Add(btnSearch);
+            panelTop.Controls.Add(btnAddTrack);
+            panelTop.Location = new Point(0, 0);
+            panelTop.Name = "panelTop";
+            panelTop.Size = new Size(1160, 55);
+            panelTop.TabIndex = 0;
+            // 
+            // btnTest
+            // 
+            btnTest.BackColor = Color.Gray;
+            btnTest.FlatAppearance.BorderSize = 0;
+            btnTest.FlatStyle = FlatStyle.Flat;
+            btnTest.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnTest.ForeColor = Color.White;
+            btnTest.Location = new Point(1021, 14);
+            btnTest.Name = "btnTest";
+            btnTest.Size = new Size(125, 27);
+            btnTest.TabIndex = 30;
+            btnTest.Text = "\U0001f6dc Test Connection";
+            btnTest.UseVisualStyleBackColor = false;
+            btnTest.Click += btnTest_Click;
+            // 
+            // lblLogo
+            // 
+            lblLogo.AutoSize = true;
+            lblLogo.BackColor = Color.Transparent;
+            lblLogo.Font = new System.Drawing.Font("Segoe UI", 18F, FontStyle.Bold);
+            lblLogo.ForeColor = Color.White;
+            lblLogo.Location = new Point(30, 10);
+            lblLogo.Name = "lblLogo";
+            lblLogo.Size = new Size(121, 32);
+            lblLogo.TabIndex = 0;
+            lblLogo.Text = "SpotiPlay";
+            // 
+            // txtSearch
+            // 
+            txtSearch.BackColor = Color.FromArgb(50, 53, 90);
+            txtSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtSearch.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtSearch.ForeColor = Color.FromArgb(120, 125, 170);
+            txtSearch.Location = new Point(260, 14);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(380, 25);
+            txtSearch.TabIndex = 1;
+            txtSearch.Text = "Search tracks or artists...";
+            // 
+            // btnSearch
+            // 
+            btnSearch.BackColor = Color.FromArgb(100, 100, 160);
+            btnSearch.FlatAppearance.BorderSize = 0;
+            btnSearch.FlatStyle = FlatStyle.Flat;
+            btnSearch.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnSearch.ForeColor = Color.White;
+            btnSearch.Location = new Point(648, 14);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(80, 26);
+            btnSearch.TabIndex = 2;
+            btnSearch.Text = "Search";
+            btnSearch.UseVisualStyleBackColor = false;
+            btnSearch.Click += btnSearch_Click;
+            // 
+            // btnAddTrack
+            // 
+            btnAddTrack.BackColor = Color.FromArgb(80, 200, 120);
+            btnAddTrack.FlatAppearance.BorderSize = 0;
+            btnAddTrack.FlatStyle = FlatStyle.Flat;
+            btnAddTrack.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnAddTrack.ForeColor = Color.White;
+            btnAddTrack.Location = new Point(745, 12);
+            btnAddTrack.Name = "btnAddTrack";
+            btnAddTrack.Size = new Size(110, 30);
+            btnAddTrack.TabIndex = 3;
+            btnAddTrack.Text = "+ Add Track";
+            btnAddTrack.UseVisualStyleBackColor = false;
+            btnAddTrack.Click += btnAddTrack_Click;
+            // 
+            // panelLeft
+            // 
+            panelLeft.AutoScroll = true;
+            panelLeft.BackColor = Color.FromArgb(40, 42, 74);
+            panelLeft.Location = new Point(30, 65);
+            panelLeft.Name = "panelLeft";
+            panelLeft.Size = new Size(784, 600);
+            panelLeft.TabIndex = 1;
+            // 
+            // panelRight
+            // 
+            panelRight.BackColor = Color.FromArgb(40, 42, 74);
+            panelRight.Controls.Add(lblTrack);
+            panelRight.Controls.Add(txtLanguage);
+            panelRight.Controls.Add(lblLanguage);
+            panelRight.Controls.Add(dtpReleaseDate);
+            panelRight.Controls.Add(btnSave);
+            panelRight.Controls.Add(txtGenre);
+            panelRight.Controls.Add(txtAlbum);
+            panelRight.Controls.Add(txtArtist);
+            panelRight.Controls.Add(lblDuration);
+            panelRight.Controls.Add(btnEdit);
+            panelRight.Controls.Add(btnRemove);
+            panelRight.Controls.Add(lblNowPlaying);
+            panelRight.Controls.Add(picNowPlaying);
+            panelRight.Controls.Add(lblArtist);
+            panelRight.Controls.Add(lblAlbum);
+            panelRight.Controls.Add(lblGenre);
+            panelRight.Controls.Add(lblReleaseDate);
+            panelRight.Controls.Add(trackBar);
+            panelRight.Controls.Add(btnPlayPause);
+            panelRight.Location = new Point(839, 65);
+            panelRight.Name = "panelRight";
+            panelRight.Size = new Size(291, 600);
+            panelRight.TabIndex = 2;
+            // 
+            // txtLanguage
+            // 
+            txtLanguage.BackColor = Color.FromArgb(40, 42, 74);
+            txtLanguage.BorderStyle = BorderStyle.None;
+            txtLanguage.ForeColor = Color.LightGray;
+            txtLanguage.Location = new Point(167, 350);
+            txtLanguage.Name = "txtLanguage";
+            txtLanguage.ReadOnly = true;
+            txtLanguage.Size = new Size(100, 16);
+            txtLanguage.TabIndex = 31;
+            txtLanguage.TextAlign = HorizontalAlignment.Right;
+            // 
+            // lblLanguage
+            // 
+            lblLanguage.BackColor = Color.Transparent;
+            lblLanguage.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblLanguage.ForeColor = Color.FromArgb(160, 165, 210);
+            lblLanguage.Location = new Point(15, 350);
+            lblLanguage.Name = "lblLanguage";
+            lblLanguage.Size = new Size(118, 18);
+            lblLanguage.TabIndex = 30;
+            lblLanguage.Text = "🌐 Language";
+            // 
+            // dtpReleaseDate
+            // 
+            dtpReleaseDate.CalendarForeColor = Color.FromArgb(40, 42, 74);
+            dtpReleaseDate.CalendarMonthBackground = Color.FromArgb(40, 42, 74);
+            dtpReleaseDate.CalendarTitleBackColor = Color.FromArgb(40, 42, 74);
+            dtpReleaseDate.CalendarTitleForeColor = Color.FromArgb(40, 42, 74);
+            dtpReleaseDate.CalendarTrailingForeColor = Color.FromArgb(40, 42, 74);
+            dtpReleaseDate.Enabled = false;
+            dtpReleaseDate.Format = DateTimePickerFormat.Short;
+            dtpReleaseDate.Location = new Point(170, 369);
+            dtpReleaseDate.Name = "dtpReleaseDate";
+            dtpReleaseDate.Size = new Size(97, 23);
+            dtpReleaseDate.TabIndex = 29;
+            dtpReleaseDate.Visible = false;
+            // 
+            // btnSave
+            // 
+            btnSave.BackColor = Color.ForestGreen;
+            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(204, 244);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(64, 27);
+            btnSave.TabIndex = 28;
+            btnSave.Text = "💾 Save";
+            btnSave.UseVisualStyleBackColor = false;
+            btnSave.Visible = false;
+            btnSave.Click += btnSave_Click;
+            // 
+            // txtGenre
+            // 
+            txtGenre.BackColor = Color.FromArgb(40, 42, 74);
+            txtGenre.BorderStyle = BorderStyle.None;
+            txtGenre.ForeColor = Color.LightGray;
+            txtGenre.Location = new Point(166, 329);
+            txtGenre.Name = "txtGenre";
+            txtGenre.ReadOnly = true;
+            txtGenre.Size = new Size(100, 16);
+            txtGenre.TabIndex = 26;
+            txtGenre.TextAlign = HorizontalAlignment.Right;
+            // 
+            // txtAlbum
+            // 
+            txtAlbum.BackColor = Color.FromArgb(40, 42, 74);
+            txtAlbum.BorderStyle = BorderStyle.None;
+            txtAlbum.ForeColor = Color.LightGray;
+            txtAlbum.Location = new Point(166, 306);
+            txtAlbum.Name = "txtAlbum";
+            txtAlbum.ReadOnly = true;
+            txtAlbum.Size = new Size(100, 16);
+            txtAlbum.TabIndex = 25;
+            txtAlbum.TextAlign = HorizontalAlignment.Right;
+            // 
+            // txtArtist
+            // 
+            txtArtist.BackColor = Color.FromArgb(40, 42, 74);
+            txtArtist.BorderStyle = BorderStyle.None;
+            txtArtist.ForeColor = Color.LightGray;
+            txtArtist.Location = new Point(167, 283);
+            txtArtist.Name = "txtArtist";
+            txtArtist.ReadOnly = true;
+            txtArtist.Size = new Size(100, 16);
+            txtArtist.TabIndex = 24;
+            txtArtist.TextAlign = HorizontalAlignment.Right;
+            // 
+            // lblDuration
+            // 
+            lblDuration.BackColor = Color.Transparent;
+            lblDuration.Enabled = false;
+            lblDuration.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblDuration.ForeColor = Color.FromArgb(160, 165, 210);
+            lblDuration.Location = new Point(143, 432);
+            lblDuration.Name = "lblDuration";
+            lblDuration.Size = new Size(118, 18);
+            lblDuration.TabIndex = 23;
+            lblDuration.TextAlign = ContentAlignment.TopRight;
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(178, 272);
+            btnEdit.BackColor = Color.FromArgb(80, 200, 120);
+            btnEdit.FlatAppearance.BorderSize = 0;
+            btnEdit.FlatStyle = FlatStyle.Flat;
+            btnEdit.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnEdit.ForeColor = Color.White;
+            btnEdit.Location = new Point(26, 516);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(75, 23);
-            btnEdit.TabIndex = 3;
-            btnEdit.Text = "Edit";
-            btnEdit.UseVisualStyleBackColor = true;
-            btnEdit.Click += editBtn_Click;
+            btnEdit.Size = new Size(92, 33);
+            btnEdit.TabIndex = 22;
+            btnEdit.Text = "🖉 Edit";
+            btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += btnEdit_Click;
             // 
-            // songIDTxt
+            // btnRemove
             // 
-            songIDTxt.Location = new Point(59, 34);
-            songIDTxt.Name = "songIDTxt";
-            songIDTxt.ReadOnly = true;
-            songIDTxt.Size = new Size(196, 23);
-            songIDTxt.TabIndex = 5;
+            btnRemove.BackColor = Color.Red;
+            btnRemove.FlatAppearance.BorderSize = 0;
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnRemove.ForeColor = Color.White;
+            btnRemove.Location = new Point(166, 516);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(92, 33);
+            btnRemove.TabIndex = 21;
+            btnRemove.Text = "🗑 Remove";
+            btnRemove.UseVisualStyleBackColor = false;
+            btnRemove.Click += btnRemove_Click_1;
             // 
-            // songNameTxt
+            // lblNowPlaying
             // 
-            songNameTxt.Location = new Point(59, 63);
-            songNameTxt.Name = "songNameTxt";
-            songNameTxt.Size = new Size(196, 23);
-            songNameTxt.TabIndex = 6;
+            lblNowPlaying.BackColor = Color.White;
+            lblNowPlaying.Font = new System.Drawing.Font("Segoe UI", 10F, FontStyle.Bold);
+            lblNowPlaying.ForeColor = Color.FromArgb(26, 27, 50);
+            lblNowPlaying.Location = new Point(15, 22);
+            lblNowPlaying.Name = "lblNowPlaying";
+            lblNowPlaying.Size = new Size(253, 32);
+            lblNowPlaying.TabIndex = 0;
+            lblNowPlaying.Text = "NOW PLAYING";
+            lblNowPlaying.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // artistNameTxt
+            // picNowPlaying
             // 
-            artistNameTxt.Location = new Point(59, 92);
-            artistNameTxt.Name = "artistNameTxt";
-            artistNameTxt.Size = new Size(196, 23);
-            artistNameTxt.TabIndex = 7;
+            picNowPlaying.BackColor = Color.FromArgb(70, 73, 110);
+            picNowPlaying.Location = new Point(15, 72);
+            picNowPlaying.Name = "picNowPlaying";
+            picNowPlaying.Size = new Size(253, 160);
+            picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
+            picNowPlaying.TabIndex = 1;
+            picNowPlaying.TabStop = false;
             // 
-            // albumNameTxt
+            // lblArtist
             // 
-            albumNameTxt.Location = new Point(59, 121);
-            albumNameTxt.Name = "albumNameTxt";
-            albumNameTxt.Size = new Size(196, 23);
-            albumNameTxt.TabIndex = 10;
+            lblArtist.BackColor = Color.Transparent;
+            lblArtist.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblArtist.ForeColor = Color.FromArgb(160, 165, 210);
+            lblArtist.Location = new Point(15, 284);
+            lblArtist.Name = "lblArtist";
+            lblArtist.Size = new Size(118, 18);
+            lblArtist.TabIndex = 4;
+            lblArtist.Text = "🎨 Artist";
             // 
-            // genreTxt
+            // lblAlbum
             // 
-            genreTxt.Location = new Point(59, 150);
-            genreTxt.Name = "genreTxt";
-            genreTxt.Size = new Size(196, 23);
-            genreTxt.TabIndex = 9;
+            lblAlbum.BackColor = Color.Transparent;
+            lblAlbum.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblAlbum.ForeColor = Color.FromArgb(160, 165, 210);
+            lblAlbum.Location = new Point(15, 306);
+            lblAlbum.Name = "lblAlbum";
+            lblAlbum.Size = new Size(118, 18);
+            lblAlbum.TabIndex = 6;
+            lblAlbum.Text = "🎵 Album";
             // 
-            // languageTxt
+            // lblGenre
             // 
-            languageTxt.Location = new Point(59, 208);
-            languageTxt.Name = "languageTxt";
-            languageTxt.Size = new Size(196, 23);
-            languageTxt.TabIndex = 13;
+            lblGenre.BackColor = Color.Transparent;
+            lblGenre.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblGenre.ForeColor = Color.FromArgb(160, 165, 210);
+            lblGenre.Location = new Point(15, 328);
+            lblGenre.Name = "lblGenre";
+            lblGenre.Size = new Size(118, 18);
+            lblGenre.TabIndex = 8;
+            lblGenre.Text = "🎸 Genre";
             // 
-            // openFileDialog1
+            // lblReleaseDate
             // 
-            openFileDialog1.FileName = "openFileDialog1";
+            lblReleaseDate.BackColor = Color.Transparent;
+            lblReleaseDate.Font = new System.Drawing.Font("Segoe UI", 8F);
+            lblReleaseDate.ForeColor = Color.FromArgb(160, 165, 210);
+            lblReleaseDate.Location = new Point(15, 372);
+            lblReleaseDate.Name = "lblReleaseDate";
+            lblReleaseDate.Size = new Size(118, 18);
+            lblReleaseDate.TabIndex = 10;
+            lblReleaseDate.Text = "📅 Release Date";
             // 
-            // btnCreate
+            // trackBar
             // 
-            btnCreate.Location = new Point(12, 272);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new Size(140, 23);
-            btnCreate.TabIndex = 14;
-            btnCreate.Text = "Add Songs";
-            btnCreate.UseVisualStyleBackColor = true;
-            btnCreate.Click += button4_Click;
-            // 
-            // userID_Txt
-            // 
-            userID_Txt.Location = new Point(59, 237);
-            userID_Txt.Name = "userID_Txt";
-            userID_Txt.ReadOnly = true;
-            userID_Txt.Size = new Size(196, 23);
-            userID_Txt.TabIndex = 15;
-            userID_Txt.TextChanged += textBox8_TextChanged;
+            trackBar.BackColor = Color.FromArgb(40, 42, 74);
+            trackBar.Enabled = false;
+            trackBar.Location = new Point(15, 406);
+            trackBar.Maximum = 265;
+            trackBar.Name = "trackBar";
+            trackBar.Size = new Size(253, 45);
+            trackBar.TabIndex = 14;
+            trackBar.TickStyle = TickStyle.None;
+            trackBar.Value = 133;
             // 
             // btnPlayPause
             // 
-            btnPlayPause.Location = new Point(178, 301);
+            btnPlayPause.BackColor = Color.Transparent;
+            btnPlayPause.Enabled = false;
+            btnPlayPause.FlatAppearance.BorderSize = 0;
+            btnPlayPause.FlatStyle = FlatStyle.Flat;
+            btnPlayPause.Font = new System.Drawing.Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnPlayPause.ForeColor = Color.White;
+            btnPlayPause.Location = new Point(109, 446);
             btnPlayPause.Name = "btnPlayPause";
-            btnPlayPause.Size = new Size(75, 23);
-            btnPlayPause.TabIndex = 19;
-            btnPlayPause.Text = "Play/Pause";
-            btnPlayPause.UseVisualStyleBackColor = true;
+            btnPlayPause.Size = new Size(70, 44);
+            btnPlayPause.TabIndex = 18;
+            btnPlayPause.Text = " ⏸";
+            btnPlayPause.UseVisualStyleBackColor = false;
             btnPlayPause.Click += btnPlayPause_Click;
             // 
-            // archiveBtn
+            // panelCrud
             // 
-            archiveBtn.Location = new Point(320, 272);
-            archiveBtn.Name = "archiveBtn";
-            archiveBtn.Size = new Size(75, 23);
-            archiveBtn.TabIndex = 20;
-            archiveBtn.Text = "Archive";
-            archiveBtn.UseVisualStyleBackColor = true;
-            archiveBtn.Click += btnArchive_Click;
+            panelCrud.BackColor = Color.FromArgb(33, 35, 62);
+            panelCrud.BorderStyle = BorderStyle.FixedSingle;
+            panelCrud.Controls.Add(lblCrudTitle);
+            panelCrud.Controls.Add(lblCrudTrackName);
+            panelCrud.Controls.Add(txtCrudTrackName);
+            panelCrud.Controls.Add(lblCrudArtist);
+            panelCrud.Controls.Add(txtCrudArtist);
+            panelCrud.Controls.Add(lblCrudDuration);
+            panelCrud.Controls.Add(txtCrudDuration);
+            panelCrud.Controls.Add(lblCrudAlbum);
+            panelCrud.Controls.Add(txtCrudAlbum);
+            panelCrud.Controls.Add(lblCrudGenre);
+            panelCrud.Controls.Add(txtCrudGenre);
+            panelCrud.Controls.Add(lblCrudBpm);
+            panelCrud.Controls.Add(txtCrudBpm);
+            panelCrud.Controls.Add(lblCrudFormat);
+            panelCrud.Controls.Add(txtCrudFormat);
+            panelCrud.Controls.Add(lblCrudDate);
+            panelCrud.Controls.Add(txtCrudDate);
+            panelCrud.Controls.Add(btnCrudSave);
+            panelCrud.Controls.Add(btnCrudCancel);
+            panelCrud.Location = new Point(180, 120);
+            panelCrud.Name = "panelCrud";
+            panelCrud.Size = new Size(500, 480);
+            panelCrud.TabIndex = 3;
+            panelCrud.Visible = false;
             // 
-            // TestConn
+            // lblCrudTitle
             // 
-            TestConn.Location = new Point(149, 356);
-            TestConn.Name = "TestConn";
-            TestConn.Size = new Size(141, 23);
-            TestConn.TabIndex = 21;
-            TestConn.Text = "Test Connection";
-            TestConn.UseVisualStyleBackColor = true;
-            TestConn.Click += button7_Click;
+            lblCrudTitle.BackColor = Color.Transparent;
+            lblCrudTitle.Font = new System.Drawing.Font("Segoe UI", 14F, FontStyle.Bold);
+            lblCrudTitle.ForeColor = Color.White;
+            lblCrudTitle.Location = new Point(20, 16);
+            lblCrudTitle.Name = "lblCrudTitle";
+            lblCrudTitle.Size = new Size(460, 30);
+            lblCrudTitle.TabIndex = 0;
+            lblCrudTitle.Text = "Add New Track";
             // 
-            // groupBox1
+            // lblCrudTrackName
             // 
-            groupBox1.Controls.Add(releaseDatePicker);
-            groupBox1.Controls.Add(filepathTxt);
-            groupBox1.Controls.Add(songIDTxt);
-            groupBox1.Controls.Add(artistNameTxt);
-            groupBox1.Controls.Add(songNameTxt);
-            groupBox1.Controls.Add(genreTxt);
-            groupBox1.Controls.Add(albumNameTxt);
-            groupBox1.Controls.Add(userID_Txt);
-            groupBox1.Controls.Add(languageTxt);
-            groupBox1.Location = new Point(465, 20);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(273, 343);
-            groupBox1.TabIndex = 22;
-            groupBox1.TabStop = false;
+            lblCrudTrackName.BackColor = Color.Transparent;
+            lblCrudTrackName.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudTrackName.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudTrackName.Location = new Point(20, 60);
+            lblCrudTrackName.Name = "lblCrudTrackName";
+            lblCrudTrackName.Size = new Size(120, 20);
+            lblCrudTrackName.TabIndex = 1;
+            lblCrudTrackName.Text = "Track Name";
             // 
-            // releaseDatePicker
+            // txtCrudTrackName
             // 
-            releaseDatePicker.Checked = false;
-            releaseDatePicker.Format = DateTimePickerFormat.Custom;
-            releaseDatePicker.Location = new Point(59, 179);
-            releaseDatePicker.Name = "releaseDatePicker";
-            releaseDatePicker.Size = new Size(196, 23);
-            releaseDatePicker.TabIndex = 23;
-            releaseDatePicker.Value = new DateTime(2026, 4, 24, 18, 58, 55, 0);
-            releaseDatePicker.ValueChanged += releaseDatePicker_ValueChanged;
+            txtCrudTrackName.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudTrackName.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudTrackName.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudTrackName.ForeColor = Color.White;
+            txtCrudTrackName.Location = new Point(20, 82);
+            txtCrudTrackName.Name = "txtCrudTrackName";
+            txtCrudTrackName.Size = new Size(458, 25);
+            txtCrudTrackName.TabIndex = 2;
             // 
-            // filepathTxt
+            // lblCrudArtist
             // 
-            filepathTxt.Location = new Point(59, 266);
-            filepathTxt.Name = "filepathTxt";
-            filepathTxt.ReadOnly = true;
-            filepathTxt.Size = new Size(196, 23);
-            filepathTxt.TabIndex = 16;
+            lblCrudArtist.BackColor = Color.Transparent;
+            lblCrudArtist.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudArtist.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudArtist.Location = new Point(20, 118);
+            lblCrudArtist.Name = "lblCrudArtist";
+            lblCrudArtist.Size = new Size(120, 20);
+            lblCrudArtist.TabIndex = 3;
+            lblCrudArtist.Text = "Artist";
+            // 
+            // txtCrudArtist
+            // 
+            txtCrudArtist.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudArtist.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudArtist.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudArtist.ForeColor = Color.White;
+            txtCrudArtist.Location = new Point(20, 140);
+            txtCrudArtist.Name = "txtCrudArtist";
+            txtCrudArtist.Size = new Size(458, 25);
+            txtCrudArtist.TabIndex = 4;
+            // 
+            // lblCrudDuration
+            // 
+            lblCrudDuration.BackColor = Color.Transparent;
+            lblCrudDuration.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudDuration.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudDuration.Location = new Point(20, 176);
+            lblCrudDuration.Name = "lblCrudDuration";
+            lblCrudDuration.Size = new Size(120, 20);
+            lblCrudDuration.TabIndex = 5;
+            lblCrudDuration.Text = "Duration (m:ss)";
+            // 
+            // txtCrudDuration
+            // 
+            txtCrudDuration.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudDuration.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudDuration.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudDuration.ForeColor = Color.White;
+            txtCrudDuration.Location = new Point(20, 198);
+            txtCrudDuration.Name = "txtCrudDuration";
+            txtCrudDuration.Size = new Size(215, 25);
+            txtCrudDuration.TabIndex = 6;
+            // 
+            // lblCrudAlbum
+            // 
+            lblCrudAlbum.BackColor = Color.Transparent;
+            lblCrudAlbum.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudAlbum.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudAlbum.Location = new Point(20, 234);
+            lblCrudAlbum.Name = "lblCrudAlbum";
+            lblCrudAlbum.Size = new Size(120, 20);
+            lblCrudAlbum.TabIndex = 9;
+            lblCrudAlbum.Text = "Album";
+            // 
+            // txtCrudAlbum
+            // 
+            txtCrudAlbum.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudAlbum.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudAlbum.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudAlbum.ForeColor = Color.White;
+            txtCrudAlbum.Location = new Point(20, 256);
+            txtCrudAlbum.Name = "txtCrudAlbum";
+            txtCrudAlbum.Size = new Size(458, 25);
+            txtCrudAlbum.TabIndex = 10;
+            // 
+            // lblCrudGenre
+            // 
+            lblCrudGenre.BackColor = Color.Transparent;
+            lblCrudGenre.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudGenre.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudGenre.Location = new Point(20, 292);
+            lblCrudGenre.Name = "lblCrudGenre";
+            lblCrudGenre.Size = new Size(80, 20);
+            lblCrudGenre.TabIndex = 11;
+            lblCrudGenre.Text = "Genre";
+            // 
+            // txtCrudGenre
+            // 
+            txtCrudGenre.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudGenre.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudGenre.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudGenre.ForeColor = Color.White;
+            txtCrudGenre.Location = new Point(20, 314);
+            txtCrudGenre.Name = "txtCrudGenre";
+            txtCrudGenre.Size = new Size(215, 25);
+            txtCrudGenre.TabIndex = 12;
+            // 
+            // lblCrudBpm
+            // 
+            lblCrudBpm.BackColor = Color.Transparent;
+            lblCrudBpm.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudBpm.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudBpm.Location = new Point(248, 176);
+            lblCrudBpm.Name = "lblCrudBpm";
+            lblCrudBpm.Size = new Size(80, 20);
+            lblCrudBpm.TabIndex = 7;
+            lblCrudBpm.Text = "BPM";
+            // 
+            // txtCrudBpm
+            // 
+            txtCrudBpm.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudBpm.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudBpm.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudBpm.ForeColor = Color.White;
+            txtCrudBpm.Location = new Point(248, 198);
+            txtCrudBpm.Name = "txtCrudBpm";
+            txtCrudBpm.Size = new Size(230, 25);
+            txtCrudBpm.TabIndex = 8;
+            // 
+            // lblCrudFormat
+            // 
+            lblCrudFormat.BackColor = Color.Transparent;
+            lblCrudFormat.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudFormat.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudFormat.Location = new Point(248, 292);
+            lblCrudFormat.Name = "lblCrudFormat";
+            lblCrudFormat.Size = new Size(80, 20);
+            lblCrudFormat.TabIndex = 13;
+            lblCrudFormat.Text = "Format";
+            // 
+            // txtCrudFormat
+            // 
+            txtCrudFormat.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudFormat.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudFormat.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudFormat.ForeColor = Color.White;
+            txtCrudFormat.Location = new Point(248, 314);
+            txtCrudFormat.Name = "txtCrudFormat";
+            txtCrudFormat.Size = new Size(230, 25);
+            txtCrudFormat.TabIndex = 14;
+            // 
+            // lblCrudDate
+            // 
+            lblCrudDate.BackColor = Color.Transparent;
+            lblCrudDate.Font = new System.Drawing.Font("Segoe UI", 9F);
+            lblCrudDate.ForeColor = Color.FromArgb(160, 165, 210);
+            lblCrudDate.Location = new Point(20, 350);
+            lblCrudDate.Name = "lblCrudDate";
+            lblCrudDate.Size = new Size(120, 20);
+            lblCrudDate.TabIndex = 15;
+            lblCrudDate.Text = "Date Created";
+            // 
+            // txtCrudDate
+            // 
+            txtCrudDate.BackColor = Color.FromArgb(50, 53, 90);
+            txtCrudDate.BorderStyle = BorderStyle.FixedSingle;
+            txtCrudDate.Font = new System.Drawing.Font("Segoe UI", 10F);
+            txtCrudDate.ForeColor = Color.White;
+            txtCrudDate.Location = new Point(20, 372);
+            txtCrudDate.Name = "txtCrudDate";
+            txtCrudDate.Size = new Size(458, 25);
+            txtCrudDate.TabIndex = 16;
+            // 
+            // btnCrudSave
+            // 
+            btnCrudSave.BackColor = Color.FromArgb(80, 200, 120);
+            btnCrudSave.FlatAppearance.BorderSize = 0;
+            btnCrudSave.FlatStyle = FlatStyle.Flat;
+            btnCrudSave.Font = new System.Drawing.Font("Segoe UI", 10F, FontStyle.Bold);
+            btnCrudSave.ForeColor = Color.White;
+            btnCrudSave.Location = new Point(20, 420);
+            btnCrudSave.Name = "btnCrudSave";
+            btnCrudSave.Size = new Size(220, 36);
+            btnCrudSave.TabIndex = 17;
+            btnCrudSave.Text = "💾 Save";
+            btnCrudSave.UseVisualStyleBackColor = false;
+            // 
+            // btnCrudCancel
+            // 
+            btnCrudCancel.BackColor = Color.FromArgb(100, 100, 120);
+            btnCrudCancel.FlatAppearance.BorderSize = 0;
+            btnCrudCancel.FlatStyle = FlatStyle.Flat;
+            btnCrudCancel.Font = new System.Drawing.Font("Segoe UI", 10F, FontStyle.Bold);
+            btnCrudCancel.ForeColor = Color.White;
+            btnCrudCancel.Location = new Point(258, 420);
+            btnCrudCancel.Name = "btnCrudCancel";
+            btnCrudCancel.Size = new Size(220, 36);
+            btnCrudCancel.TabIndex = 18;
+            btnCrudCancel.Text = "✕ Cancel";
+            btnCrudCancel.UseVisualStyleBackColor = false;
+            // 
+            // lblTrack
+            // 
+            lblTrack.BackColor = Color.FromArgb(40, 42, 74);
+            lblTrack.BorderStyle = BorderStyle.None;
+            lblTrack.Font = new System.Drawing.Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTrack.ForeColor = Color.White;
+            lblTrack.Location = new Point(15, 245);
+            lblTrack.Name = "lblTrack";
+            lblTrack.ReadOnly = true;
+            lblTrack.Size = new Size(183, 26);
+            lblTrack.TabIndex = 32;
+            lblTrack.Text = "No Song Selected";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            BackgroundImage = Properties.Resources.asteroid;
-            ClientSize = new Size(813, 450);
-            Controls.Add(groupBox1);
-            Controls.Add(TestConn);
-            Controls.Add(archiveBtn);
-            Controls.Add(btnPlayPause);
-            Controls.Add(btnCreate);
-            Controls.Add(btnEdit);
-            Controls.Add(dataGridView1);
-            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            BackColor = Color.FromArgb(26, 27, 50);
+            ClientSize = new Size(1158, 677);
+            Controls.Add(panelTop);
+            Controls.Add(panelLeft);
+            Controls.Add(panelRight);
+            Controls.Add(panelCrud);
+            Font = new System.Drawing.Font("Segoe UI", 9F);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "MainForm";
-            Text = "Form1";
-            FormClosed += MainForm_FormClosed;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "SpotiPlay";
+            panelTop.ResumeLayout(false);
+            panelTop.PerformLayout();
+            panelRight.ResumeLayout(false);
+            panelRight.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picNowPlaying).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
+            panelCrud.ResumeLayout(false);
+            panelCrud.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-        private DataGridView dataGridView1;
+
+        // ── Top bar ──
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.Label lblLogo;
+        private System.Windows.Forms.TextBox txtSearch;
+        private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button btnAddTrack;
+
+        // ── Track list ──
+        private System.Windows.Forms.Panel panelLeft;
+
+        // ── Now Playing ──
+        private System.Windows.Forms.Panel panelRight;
+        private System.Windows.Forms.Label lblNowPlaying;
+        private System.Windows.Forms.PictureBox picNowPlaying;
+        private System.Windows.Forms.Label lblArtist;
+        private System.Windows.Forms.Label lblAlbum;
+        private System.Windows.Forms.Label lblGenre;
+        private System.Windows.Forms.Label lblReleaseDate;
+        private System.Windows.Forms.TrackBar trackBar;
+        private System.Windows.Forms.Button btnPlayPause;
+
+        // ── CRUD overlay ──
+        private System.Windows.Forms.Panel panelCrud;
+        private System.Windows.Forms.Label lblCrudTitle;
+        private System.Windows.Forms.Label lblCrudTrackName;
+        private System.Windows.Forms.TextBox txtCrudTrackName;
+        private System.Windows.Forms.Label lblCrudArtist;
+        private System.Windows.Forms.TextBox txtCrudArtist;
+        private System.Windows.Forms.Label lblCrudDuration;
+        private System.Windows.Forms.TextBox txtCrudDuration;
+        private System.Windows.Forms.Label lblCrudAlbum;
+        private System.Windows.Forms.TextBox txtCrudAlbum;
+        private System.Windows.Forms.Label lblCrudGenre;
+        private System.Windows.Forms.TextBox txtCrudGenre;
+        private System.Windows.Forms.Label lblCrudBpm;
+        private System.Windows.Forms.TextBox txtCrudBpm;
+        private System.Windows.Forms.Label lblCrudFormat;
+        private System.Windows.Forms.TextBox txtCrudFormat;
+        private System.Windows.Forms.Label lblCrudDate;
+        private System.Windows.Forms.TextBox txtCrudDate;
+        private System.Windows.Forms.Button btnCrudSave;
+        private System.Windows.Forms.Button btnCrudCancel;
+        private Button btnRemove;
         private Button btnEdit;
-        private Button createBtn;
-        private TextBox songIDTxt;
-        private TextBox songNameTxt;
-        private TextBox artistNameTxt;
-        private TextBox albumNameTxt;
-        private TextBox genreTxt;
-        private TextBox releaseDateTxt;
-        private TextBox languageTxt;
-        private OpenFileDialog openFileDialog1;
-        private Button btnCreate;
-        private TextBox userID_Txt;
-        private Button btnPlayPause;
-        private Button archiveBtn;
-        private Button TestConn;
-        private GroupBox groupBox1;
-        private TextBox filepathTxt;
-        private DateTimePicker releaseDatePicker;
+        private Label lblDuration;
+        private TextBox txtArtist;
+        private TextBox txtGenre;
+        private TextBox txtAlbum;
+        private Button btnSave;
+        private DateTimePicker dtpReleaseDate;
+        private Button btnTest;
+        private TextBox txtLanguage;
+        private Label lblLanguage;
+        private TextBox lblTrack;
     }
 }
