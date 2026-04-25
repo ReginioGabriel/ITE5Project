@@ -28,10 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox1 = new PictureBox();
             dataGridView1 = new DataGridView();
-            editBtn = new Button();
-            createBtn = new Button();
+            btnEdit = new Button();
             songIDTxt = new TextBox();
             songNameTxt = new TextBox();
             artistNameTxt = new TextBox();
@@ -39,27 +37,17 @@
             genreTxt = new TextBox();
             languageTxt = new TextBox();
             openFileDialog1 = new OpenFileDialog();
-            filepathBtn = new Button();
+            btnCreate = new Button();
             userID_Txt = new TextBox();
-            playPauseBtn = new Button();
+            btnPlayPause = new Button();
             archiveBtn = new Button();
             TestConn = new Button();
             groupBox1 = new GroupBox();
             releaseDatePicker = new DateTimePicker();
             filepathTxt = new TextBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox1.SuspendLayout();
             SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Image = Properties.Resources.asteroid;
-            pictureBox1.Location = new Point(722, 366);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(528, 384);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
             // 
             // dataGridView1
             // 
@@ -71,30 +59,20 @@
             dataGridView1.Location = new Point(12, 20);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(591, 373);
+            dataGridView1.Size = new Size(421, 246);
             dataGridView1.TabIndex = 1;
             dataGridView1.CellContentDoubleClick += dataGridView1_CellContentDoubleClick;
             dataGridView1.DoubleClick += dataGridView1_DoubleClick;
             // 
-            // editBtn
+            // btnEdit
             // 
-            editBtn.Location = new Point(157, 399);
-            editBtn.Name = "editBtn";
-            editBtn.Size = new Size(75, 23);
-            editBtn.TabIndex = 3;
-            editBtn.Text = "Edit";
-            editBtn.UseVisualStyleBackColor = true;
-            editBtn.Click += editBtn_Click;
-            // 
-            // createBtn
-            // 
-            createBtn.Location = new Point(259, 399);
-            createBtn.Name = "createBtn";
-            createBtn.Size = new Size(75, 23);
-            createBtn.TabIndex = 4;
-            createBtn.Text = "Create";
-            createBtn.UseVisualStyleBackColor = true;
-            createBtn.Click += createBtn_Click;
+            btnEdit.Location = new Point(178, 272);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(75, 23);
+            btnEdit.TabIndex = 3;
+            btnEdit.Text = "Edit";
+            btnEdit.UseVisualStyleBackColor = true;
+            btnEdit.Click += editBtn_Click;
             // 
             // songIDTxt
             // 
@@ -143,15 +121,15 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
-            // filepathBtn
+            // btnCreate
             // 
-            filepathBtn.Location = new Point(12, 399);
-            filepathBtn.Name = "filepathBtn";
-            filepathBtn.Size = new Size(140, 23);
-            filepathBtn.TabIndex = 14;
-            filepathBtn.Text = "Edit Filepath";
-            filepathBtn.UseVisualStyleBackColor = true;
-            filepathBtn.Click += button4_Click;
+            btnCreate.Location = new Point(12, 272);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(140, 23);
+            btnCreate.TabIndex = 14;
+            btnCreate.Text = "Add Songs";
+            btnCreate.UseVisualStyleBackColor = true;
+            btnCreate.Click += button4_Click;
             // 
             // userID_Txt
             // 
@@ -162,29 +140,29 @@
             userID_Txt.TabIndex = 15;
             userID_Txt.TextChanged += textBox8_TextChanged;
             // 
-            // playPauseBtn
+            // btnPlayPause
             // 
-            playPauseBtn.Location = new Point(259, 428);
-            playPauseBtn.Name = "playPauseBtn";
-            playPauseBtn.Size = new Size(75, 23);
-            playPauseBtn.TabIndex = 19;
-            playPauseBtn.Text = "Play/Pause";
-            playPauseBtn.UseVisualStyleBackColor = true;
-            playPauseBtn.Click += button5_Click;
+            btnPlayPause.Location = new Point(178, 301);
+            btnPlayPause.Name = "btnPlayPause";
+            btnPlayPause.Size = new Size(75, 23);
+            btnPlayPause.TabIndex = 19;
+            btnPlayPause.Text = "Play/Pause";
+            btnPlayPause.UseVisualStyleBackColor = true;
+            btnPlayPause.Click += btnPlayPause_Click;
             // 
             // archiveBtn
             // 
-            archiveBtn.Location = new Point(363, 399);
+            archiveBtn.Location = new Point(320, 272);
             archiveBtn.Name = "archiveBtn";
             archiveBtn.Size = new Size(75, 23);
             archiveBtn.TabIndex = 20;
             archiveBtn.Text = "Archive";
             archiveBtn.UseVisualStyleBackColor = true;
-            archiveBtn.Click += button6_Click;
+            archiveBtn.Click += btnArchive_Click;
             // 
             // TestConn
             // 
-            TestConn.Location = new Point(461, 399);
+            TestConn.Location = new Point(149, 356);
             TestConn.Name = "TestConn";
             TestConn.Size = new Size(141, 23);
             TestConn.TabIndex = 21;
@@ -203,18 +181,22 @@
             groupBox1.Controls.Add(albumNameTxt);
             groupBox1.Controls.Add(userID_Txt);
             groupBox1.Controls.Add(languageTxt);
-            groupBox1.Location = new Point(633, 9);
+            groupBox1.Location = new Point(465, 20);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(295, 367);
+            groupBox1.Size = new Size(273, 343);
             groupBox1.TabIndex = 22;
             groupBox1.TabStop = false;
             // 
             // releaseDatePicker
             // 
+            releaseDatePicker.Checked = false;
+            releaseDatePicker.Format = DateTimePickerFormat.Custom;
             releaseDatePicker.Location = new Point(59, 179);
             releaseDatePicker.Name = "releaseDatePicker";
             releaseDatePicker.Size = new Size(196, 23);
             releaseDatePicker.TabIndex = 23;
+            releaseDatePicker.Value = new DateTime(2026, 4, 24, 18, 58, 55, 0);
+            releaseDatePicker.ValueChanged += releaseDatePicker_ValueChanged;
             // 
             // filepathTxt
             // 
@@ -228,20 +210,19 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1262, 749);
+            BackgroundImage = Properties.Resources.asteroid;
+            ClientSize = new Size(813, 450);
             Controls.Add(groupBox1);
             Controls.Add(TestConn);
             Controls.Add(archiveBtn);
-            Controls.Add(playPauseBtn);
-            Controls.Add(filepathBtn);
-            Controls.Add(createBtn);
-            Controls.Add(editBtn);
+            Controls.Add(btnPlayPause);
+            Controls.Add(btnCreate);
+            Controls.Add(btnEdit);
             Controls.Add(dataGridView1);
-            Controls.Add(pictureBox1);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "MainForm";
             Text = "Form1";
             FormClosed += MainForm_FormClosed;
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -249,10 +230,8 @@
         }
 
         #endregion
-
-        private PictureBox pictureBox1;
         private DataGridView dataGridView1;
-        private Button editBtn;
+        private Button btnEdit;
         private Button createBtn;
         private TextBox songIDTxt;
         private TextBox songNameTxt;
@@ -262,9 +241,9 @@
         private TextBox releaseDateTxt;
         private TextBox languageTxt;
         private OpenFileDialog openFileDialog1;
-        private Button filepathBtn;
+        private Button btnCreate;
         private TextBox userID_Txt;
-        private Button playPauseBtn;
+        private Button btnPlayPause;
         private Button archiveBtn;
         private Button TestConn;
         private GroupBox groupBox1;

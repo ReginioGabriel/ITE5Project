@@ -11,15 +11,105 @@ namespace WinFormsApp7
 
     public partial class MainForm : Form
     {
-        private WaveOutEvent outputDevice;
-        private AudioFileReader audioFile;
+        private WaveOutEvent? outputDevice;
+        private AudioFileReader? audioFile;
         const string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
+        private readonly MySqlConnection con = new(connString);
 
         public MainForm()
         {
             InitializeComponent();
-            loadTable(null, null); // Load data into DataGridView on form load
+            LoadTable(); // Load data into DataGridView on form load
 
+            releaseDatePicker.CustomFormat = " "; // Hides the date first in the screen
+        }
+
+        private void LoadTable()
+        {
+
+            try
+            {
+                con.Open();
+                string query = "SELECT * FROM SongsTbl";
+                MySqlCommand cmd = new MySqlCommand(query, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(reader);
+                dataGridView1.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+//DATAGRID
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        {
+            releaseDatePicker.Format = DateTimePickerFormat.Short; //Show the date into the screen
+
+            DataGridViewRow row = dataGridView1.CurrentRow;
+            if (row == null) return;
+
+            LoadSongFromRow(row);
+        }
+
+        private void LoadSongFromRow(DataGridViewRow row)
+        {
+            songIDTxt.Text = GetCellText(row, "song_id");
+            userID_Txt.Text = GetCellText(row, "user_id");
+            songNameTxt.Text = GetCellText(row, "title");
+            artistNameTxt.Text = GetCellText(row, "artist");
+            albumNameTxt.Text = GetCellText(row, "album");
+            genreTxt.Text = GetCellText(row, "genre");
+            languageTxt.Text = GetCellText(row, "language");
+            filepathTxt.Text = GetCellText(row, "file_path");
+
+            if (DateTime.TryParse(GetCellText(row, "release_date"), out var releaseDate))
+                releaseDatePicker.Value = releaseDate;
+        }
+
+        private string GetCellText(DataGridViewRow row, string columnName)
+        {
+            return row.Cells[columnName].Value?.ToString() ?? string.Empty;
+        }
+
+
+
+// BUTTONS
+        private void editBtn_Click(object sender, EventArgs e)
+        {
+
+            // 1. Define the SQL Update statement
+            string query = "UPDATE SongsTbl SET title = @val1, artist = @val2, album = @val3, genre = @val4, release_date = @val5, language = @val6, user_id = @val7, file_path = @val8 WHERE song_id = @id";
+            MySqlCommand cmd = new MySqlCommand(query, con);
+
+
+            // 2. Map Textboxes to the parameters
+            cmd.Parameters.AddWithValue("@val1", songNameTxt.Text);
+            cmd.Parameters.AddWithValue("@val2", artistNameTxt.Text);
+            cmd.Parameters.AddWithValue("@val3", albumNameTxt.Text);
+            cmd.Parameters.AddWithValue("@val4", genreTxt.Text);
+            cmd.Parameters.AddWithValue("@val5", releaseDatePicker.Value.Date);
+            cmd.Parameters.AddWithValue("@val6", languageTxt.Text);
+            cmd.Parameters.AddWithValue("@val7", userID_Txt.Text);
+            cmd.Parameters.AddWithValue("@val8", filepathTxt.Text);
+            cmd.Parameters.AddWithValue("@id", songIDTxt.Text); // The Primary Key is vital!
+
+            try
+            {
+                con.Open();
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0)
+                {
+                    LoadTable(); // Refresh the DataGridView to show updated data
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
         private bool IsValidMp3(string filePath)
@@ -43,80 +133,6 @@ namespace WinFormsApp7
             catch
             {
                 return false;
-            }
-        }
-        private void loadTable(object sender, EventArgs e)
-        {
-
-            using (MySqlConnection con = new MySqlConnection(connString))
-            {
-                try
-                {
-                    con.Open();
-                    string query = "SELECT * FROM SongsTbl";
-                    MySqlCommand cmd = new MySqlCommand(query, con);
-                    MySqlDataReader reader = cmd.ExecuteReader();
-                    DataTable dt = new DataTable();
-                    dt.Load(reader);
-                    dataGridView1.DataSource = dt;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-            }
-        }
-
-        private void dataGridView1_DoubleClick(object sender, EventArgs e)
-        {
-            DataGridViewRow row = dataGridView1.CurrentRow;
-            songIDTxt.Text = row.Cells[0].Value.ToString();
-            songNameTxt.Text = row.Cells[1].Value.ToString();
-            artistNameTxt.Text = row.Cells[2].Value.ToString();
-            albumNameTxt.Text = row.Cells[3].Value.ToString();
-            genreTxt.Text = row.Cells[4].Value.ToString();
-            releaseDatePicker.Value = Convert.ToDateTime(row.Cells[5].Value);
-            languageTxt.Text = row.Cells[6].Value.ToString();
-            userID_Txt.Text = row.Cells[9].Value.ToString();
-            filepathTxt.Text = row.Cells[10].Value.ToString();
-        }
-
-        private void editBtn_Click(object sender, EventArgs e)
-        {
-
-            // 1. Define the SQL Update statement
-            string query = "UPDATE SongsTbl SET title = @val1, artist = @val2, album = @val3, genre = @val4, release_date = @val5, language = @val6, user_id = @val7, file_path = @val8 WHERE song_id = @id";
-
-            using (MySqlConnection conn = new MySqlConnection(connString))
-            {
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                {
-                    // 2. Map Textboxes to the parameters
-                    cmd.Parameters.AddWithValue("@val1", songNameTxt.Text);
-                    cmd.Parameters.AddWithValue("@val2", artistNameTxt.Text);
-                    cmd.Parameters.AddWithValue("@val3", albumNameTxt.Text);
-                    cmd.Parameters.AddWithValue("@val4", genreTxt.Text);
-                    cmd.Parameters.AddWithValue("@val5", releaseDatePicker.Value.Date);
-                    cmd.Parameters.AddWithValue("@val6", languageTxt.Text);
-                    cmd.Parameters.AddWithValue("@val7", userID_Txt.Text);
-                    cmd.Parameters.AddWithValue("@val8", filepathTxt.Text);
-                    cmd.Parameters.AddWithValue("@id", songIDTxt.Text); // The Primary Key is vital!
-
-                    try
-                    {
-                        conn.Open();
-                        int rows = cmd.ExecuteNonQuery();
-
-                        if (rows > 0)
-                        {
-                            loadTable(null, null); // Refresh the DataGridView to show updated data
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: " + ex.Message);
-                    }
-                }
             }
         }
 
@@ -145,7 +161,7 @@ namespace WinFormsApp7
                 // Copy file into Resources folder
                 string fileName = Path.GetFileName(sourcePath);
                 string destPath = Path.Combine(resourcesFolder, fileName);
-                
+
                 System.IO.File.Copy(sourcePath, destPath, overwrite: true);
 
                 // Set the textbox to the new path
@@ -155,9 +171,8 @@ namespace WinFormsApp7
 
         string currentSong = "";
         bool playing = true;
-        private void button5_Click(object sender, EventArgs e)
+        private void btnPlayPause_Click(object sender, EventArgs e)
         {
-
             if (currentSong == filepathTxt.Text && playing == true) //Same song, playing
             {
                 outputDevice?.Pause();
@@ -188,7 +203,7 @@ namespace WinFormsApp7
 
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void btnArchive_Click(object sender, EventArgs e)
         {
 
         }
@@ -242,8 +257,8 @@ namespace WinFormsApp7
             if (createCounter == 0)
             {
                 DialogResult result = MessageBox.Show("Create another Record?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                
-                if(result == DialogResult.Yes)
+
+                if (result == DialogResult.Yes)
                 {
                     createCounter++;
                     // Clear textboxes for new entry
@@ -264,9 +279,9 @@ namespace WinFormsApp7
                     return; // Exit the method if user chooses not to create another record
                 }
             }
-            else if(createCounter == 1)
+            else if (createCounter == 1)
             {
-                if(string.IsNullOrWhiteSpace(songNameTxt.Text) || string.IsNullOrWhiteSpace(artistNameTxt.Text) || string.IsNullOrWhiteSpace(albumNameTxt.Text) ||
+                if (string.IsNullOrWhiteSpace(songNameTxt.Text) || string.IsNullOrWhiteSpace(artistNameTxt.Text) || string.IsNullOrWhiteSpace(albumNameTxt.Text) ||
                     string.IsNullOrWhiteSpace(genreTxt.Text) || string.IsNullOrWhiteSpace(languageTxt.Text))
                 {
                     MessageBox.Show("Please fill in all fields before creating a record.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -296,7 +311,7 @@ namespace WinFormsApp7
 
                             if (rows > 0)
                             {
-                                loadTable(null, null); // Refresh the DataGridView to show updated data
+                                LoadTable(); // Refresh the DataGridView to show updated data
                                 songIDTxt.Clear();
                                 songNameTxt.Clear();
                                 artistNameTxt.Clear();
@@ -315,6 +330,10 @@ namespace WinFormsApp7
                     }
                 }
             }
+        }
+
+        private void releaseDatePicker_ValueChanged(object sender, EventArgs e)
+        {
         }
     }
 }

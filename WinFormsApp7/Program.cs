@@ -11,8 +11,38 @@ namespace WinFormsApp7
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            AppConfig.Initialize();
+            Application.Run(new btnTestConnection());
 
         }
+
+        public static class AppConfig
+        {
+            // Where user-uploaded songs are stored
+            public static string SongsFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "YourAppName", "songs"
+            );
+
+            // Where the 30 preset MP3s live (next to the .exe)
+            public static string PresetsFolder = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, "presets"
+            );
+
+            public static void Initialize()
+            {
+                Directory.CreateDirectory(SongsFolder);
+            }
+
+            // Returns the correct full path depending on preset or uploaded
+            public static string ResolveSongPath(string fileName, bool isPreset)
+            {
+                if (isPreset)
+                    return Path.Combine(PresetsFolder, fileName);
+                else
+                    return Path.Combine(SongsFolder, fileName);
+            }
+        }
+
     }
 }

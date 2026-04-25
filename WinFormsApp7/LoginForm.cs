@@ -13,6 +13,7 @@ namespace WinFormsApp7
     public partial class LoginForm : Form
     {
         const string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
+        private readonly MySqlConnection con = new(connString);
 
         public LoginForm()
         {
@@ -109,62 +110,47 @@ namespace WinFormsApp7
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Please enter both username and password.",
-                                "Validation Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter username and password.", "Validation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            string query = "SELECT UserID, Username FROM UserTbl WHERE Username = @username AND Password = @password";
+
             try
             {
-                using (MySqlConnection conn = new MySqlConnection(connString))
+                con.Open();
+
+                using var cmd = new MySqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password); // hash this if using hashed passwords
+
+                using var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
                 {
-                    conn.Open();
+                    //// ✅ User found — store in Session
+                    //Session.CurrentUserId = reader.GetInt32("UserID");
+                    //Session.CurrentUsername = reader.GetString("Username");
 
-                    string query =
-                        "SELECT COUNT(*) FROM UserTbl " +
-                        "WHERE Username = @username AND Password = @password";
-
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@username", username);
-                        cmd.Parameters.AddWithValue("@password", password);
-
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-
-                        if (count > 0)
-                        {
-                            MessageBox.Show("Login successful! Welcome, " + username + ".",
-                                            "Login Successful",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Information);
-
-                            // Open main form and hide login
-                            MainForm mainForm = new MainForm();
-                            mainForm.Show();
-                            this.Hide();
-
-
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username or password.",
-                                            "Login Failed",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Error);
-                        }
-                    }
+                    // Open SpotiPlay main form
+                    new MainForm().Show();
+                    this.Hide(); // or this.Close()
+                }
+                else
+                {
+                    // ❌ No matching user found
+                    MessageBox.Show("Invalid username or password.", "Login Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Database error: " + ex.Message,
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Login error:\n{ex.Message}", "DB Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
         private void ClearFields()
