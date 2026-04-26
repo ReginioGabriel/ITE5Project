@@ -400,9 +400,6 @@ namespace WinFormsApp7
                     deleteCmd.Parameters.AddWithValue("@id", song.SongId);
                     deleteCmd.ExecuteNonQuery();
 
-                    // 3. Refresh list
-                    LoadTracks(txtSearch.ForeColor == Color.Gray ? "" : txtSearch.Text.Trim());
-
                     MessageBox.Show($"\"{song.Title}\" moved to archive.", "Archived",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

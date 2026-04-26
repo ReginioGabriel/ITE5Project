@@ -153,7 +153,7 @@ namespace WinFormsApp7
                 int deleted = 0;
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    int archiveId = Convert.ToInt32(row.Cells["Archived ID"].Value); // ← per row
+                    int archiveId = Convert.ToInt32(row.Cells["archiveNumID"].Value); // ← per row
 
                     string sql = "DELETE FROM archiveTBL WHERE archiveNumID = @id";
                     using var cmd = new MySqlCommand(sql, conn);
@@ -199,7 +199,7 @@ namespace WinFormsApp7
                 int restored = 0;
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    int archiveId = Convert.ToInt32(row.Cells["Archived ID"].Value); // ← use THIS per row
+                    int archiveId = Convert.ToInt32(row.Cells["archiveNumID"].Value); // ← use THIS per row
 
                     // 1. Copy back to SongsTbl
                     string insertSql = @"
