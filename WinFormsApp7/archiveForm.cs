@@ -16,9 +16,16 @@ namespace WinFormsApp7
         public archiveForm()
         {
             InitializeComponent();
-            StyleGrid();
+            
+            _searchTimer.Interval = 400;
+            _searchTimer.Tick += (s, e) =>
+            {
+                _searchTimer.Stop(); // stop so it only fires once
+                LoadTracks(txtSearch.ForeColor == Color.Gray ? "" : txtSearch.Text.Trim());
+            };
             Session.CurrentUserId = 1;
             LoadTracks();
+            StyleGrid();
         }
         private int GetSelectedArchiveId()
         {
@@ -32,6 +39,7 @@ namespace WinFormsApp7
             return Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["Archived ID"].Value);
         }
 
+
         private string GetSelectedTitle()
         {
             if (dataGridView1.SelectedRows.Count == 0) return "";
@@ -39,7 +47,7 @@ namespace WinFormsApp7
         }
         private void StyleGrid()
         {
-            
+            dataGridView1.Columns["archiveNumID"].Visible = false;
             dataGridView1.BackgroundColor = Color.FromArgb(30, 34, 57);
             dataGridView1.GridColor = Color.FromArgb(50, 54, 80);
             dataGridView1.BorderStyle = BorderStyle.None;
@@ -77,7 +85,7 @@ namespace WinFormsApp7
         private void LoadTracks(string searchTerm = "")
         {
             string query = @"
-        SELECT archiveNumID   AS 'Archived ID',
+        SELECT archiveNumID,
                title        AS 'Title',
                artist       AS 'Artist',
                album        AS 'Album',
@@ -100,10 +108,11 @@ namespace WinFormsApp7
 
                 var dt = new DataTable();
                 new MySqlDataAdapter(cmd).Fill(dt);
+                
                 dataGridView1.DataSource = dt;
 
                 // Show empty message
-                int rowcount = dt.Rows.Count + 1;
+                int rowcount = dt.Rows.Count;
                 lblCount.Text = dt.Rows.Count == 0
                     ? "No archived tracks found."
                     : $"{rowcount} archived track(s)";
@@ -122,13 +131,16 @@ namespace WinFormsApp7
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int archiveId = GetSelectedArchiveId();
-            if (archiveId == -1) return;
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select at least one track.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            string title = GetSelectedTitle();
             int count = dataGridView1.SelectedRows.Count;
             var confirm = MessageBox.Show(
-                $"Permanently delete \"{title}\"? This cannot be undone!", "Permanent Delete",
+                $"Permanently delete {count} track(s)? This cannot be undone!", "Permanent Delete",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (confirm != DialogResult.Yes) return;
@@ -138,14 +150,22 @@ namespace WinFormsApp7
                 using var conn = new MySqlConnection(connString);
                 conn.Open();
 
-                string sql = "DELETE FROM archiveTBL WHERE archiveNumID = @id";
-                using var cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", archiveId);
-                cmd.ExecuteNonQuery();
+                int deleted = 0;
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    int archiveId = Convert.ToInt32(row.Cells["Archived ID"].Value); // ← per row
+
+                    string sql = "DELETE FROM archiveTBL WHERE archiveNumID = @id";
+                    using var cmd = new MySqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@id", archiveId); // ← per row
+                    cmd.ExecuteNonQuery();
+
+                    deleted++;
+                }
 
                 LoadTracks();
 
-                MessageBox.Show($"\"{title}\" permanently deleted.", "Deleted",
+                MessageBox.Show($"{deleted} track(s) permanently deleted.", "Deleted",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -157,14 +177,18 @@ namespace WinFormsApp7
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int archiveId = GetSelectedArchiveId();
-            if (archiveId == -1) return;
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select at least one track.", "No Selection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            string title = GetSelectedTitle();
-            var confirm = MessageBox.Show(
-                $"Restore \"{title}\" back to your library?", "Confirm Restore",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             int count = dataGridView1.SelectedRows.Count;
+            var confirm = MessageBox.Show(
+                $"Restore {count} track(s) back to your library?", "Confirm Restore",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
             if (confirm != DialogResult.Yes) return;
 
             try
@@ -172,32 +196,36 @@ namespace WinFormsApp7
                 using var conn = new MySqlConnection(connString);
                 conn.Open();
 
+                int restored = 0;
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    int archiveIdd = Convert.ToInt32(row.Cells["ID"].Value);
+                    int archiveId = Convert.ToInt32(row.Cells["Archived ID"].Value); // ← use THIS per row
+
                     // 1. Copy back to SongsTbl
                     string insertSql = @"
-            INSERT INTO SongsTbl 
-                (song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path, is_preset)
-            SELECT song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path, is_preset
-            FROM   archiveTBL
-            WHERE  archiveNumID = @id";
+                INSERT INTO SongsTbl 
+                    (song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path, is_preset)
+                SELECT song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path, is_preset
+                FROM   archiveTBL
+                WHERE  archiveNumID = @id";
 
                     using var insertCmd = new MySqlCommand(insertSql, conn);
-                    insertCmd.Parameters.AddWithValue("@id", archiveId);
+                    insertCmd.Parameters.AddWithValue("@id", archiveId); // ← per row id
                     insertCmd.ExecuteNonQuery();
 
-                    // 2. Remove from ArchivedSongs
+                    // 2. Remove from archiveTBL
                     string deleteSql = "DELETE FROM archiveTBL WHERE archiveNumID = @id";
                     using var deleteCmd = new MySqlCommand(deleteSql, conn);
-                    deleteCmd.Parameters.AddWithValue("@id", archiveId);
+                    deleteCmd.Parameters.AddWithValue("@id", archiveId); // ← per row id
                     deleteCmd.ExecuteNonQuery();
 
+                    restored++;
                 }
+
                 // 3. Refresh
                 LoadTracks();
 
-                MessageBox.Show($"\"{title}\" restored to library!", "Restored",
+                MessageBox.Show($"{restored} track(s) restored to library!", "Restored",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -209,7 +237,7 @@ namespace WinFormsApp7
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var test = new btnTestConnection();
+            var test = new MainForm();
             test.Show();
             this.Hide();
         }
@@ -217,6 +245,17 @@ namespace WinFormsApp7
         private void button4_Click(object sender, EventArgs e)
         {
             dataGridView1.SelectAll();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            _searchTimer.Stop();// para di lag previous kasi kada letter load ng tracks so eto nag wait for user to stop typing then load tracks
+            _searchTimer.Start();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

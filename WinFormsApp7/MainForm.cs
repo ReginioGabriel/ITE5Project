@@ -351,11 +351,11 @@ namespace WinFormsApp7
 
             string message = song.IsPreset
                 ? $"Hide preset song \"{song.Title}\" from your list?"
-                : $"Delete \"{song.Title}\" from your library?\nThis cannot be undone.";
+                : $"Archive \"{song.Title}\" from your library?\nThis can restored using the archives.";
 
             var confirm = MessageBox.Show(
                 message,
-                "Confirm Remove",
+                "Confirm Archive",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -382,24 +382,28 @@ namespace WinFormsApp7
                 }
                 else
                 {
-                    string sql = @"
-                DELETE FROM SongsTbl
-                WHERE song_id = @songid
-                  AND user_id = @uid";
+                    // 1. Copy to archiveTBL
+                    string insertSql = @"
+                    INSERT INTO archiveTBL 
+                        (song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path)
+                    SELECT song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path
+                    FROM   SongsTbl
+                    WHERE  song_id = @id";
 
-                    using var cmd = new MySqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@songid", song.SongId);
-                    cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
-                    cmd.ExecuteNonQuery();
+                    using var insertCmd = new MySqlCommand(insertSql, conn);
+                    insertCmd.Parameters.AddWithValue("@id", song.SongId);
+                    insertCmd.ExecuteNonQuery();
 
-                    if (!string.IsNullOrWhiteSpace(song.FilePath))
-                    {
-                        string fullPath = Path.Combine(AppConfig.SongsFolder, song.FilePath);
-                        if (System.IO.File.Exists(fullPath))
-                            System.IO.File.Delete(fullPath);
-                    }
+                    // 2. Delete from SongsTbl
+                    string deleteSql = "DELETE FROM SongsTbl WHERE song_id = @id";
+                    using var deleteCmd = new MySqlCommand(deleteSql, conn);
+                    deleteCmd.Parameters.AddWithValue("@id", song.SongId);
+                    deleteCmd.ExecuteNonQuery();
 
-                    MessageBox.Show("Track deleted successfully.", "Deleted",
+                    // 3. Refresh list
+                    LoadTracks(txtSearch.ForeColor == Color.Gray ? "" : txtSearch.Text.Trim());
+
+                    MessageBox.Show($"\"{song.Title}\" moved to archive.", "Archived",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
@@ -409,7 +413,7 @@ namespace WinFormsApp7
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Remove failed:\n{ex.Message}", "Error",
+                MessageBox.Show($"Archive failed:\n{ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -595,7 +599,7 @@ namespace WinFormsApp7
             string genre = txtGenre.Text.Trim();
             string language = txtLanguage.Text.Trim();
 
-            
+
 
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -668,5 +672,22 @@ namespace WinFormsApp7
             }
         }
         #endregion
+
+        private void archivedBtn_Click(object sender, EventArgs e)
+        {
+            var archiveForm = new archiveForm();
+            archiveForm.Show();
+            this.Hide();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }

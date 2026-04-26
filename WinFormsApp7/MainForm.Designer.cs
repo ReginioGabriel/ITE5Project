@@ -20,6 +20,7 @@ namespace WinFormsApp7
         private void InitializeComponent()
         {
             panelTop = new Panel();
+            archivedBtn = new Button();
             btnTest = new Button();
             lblLogo = new Label();
             txtSearch = new TextBox();
@@ -27,6 +28,7 @@ namespace WinFormsApp7
             btnAddTrack = new Button();
             panelLeft = new Panel();
             panelRight = new Panel();
+            lblTrack = new TextBox();
             txtLanguage = new TextBox();
             lblLanguage = new Label();
             dtpReleaseDate = new DateTimePicker();
@@ -65,7 +67,6 @@ namespace WinFormsApp7
             txtCrudDate = new TextBox();
             btnCrudSave = new Button();
             btnCrudCancel = new Button();
-            lblTrack = new TextBox();
             panelTop.SuspendLayout();
             panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNowPlaying).BeginInit();
@@ -76,6 +77,7 @@ namespace WinFormsApp7
             // panelTop
             // 
             panelTop.BackColor = Color.FromArgb(26, 27, 50);
+            panelTop.Controls.Add(archivedBtn);
             panelTop.Controls.Add(btnTest);
             panelTop.Controls.Add(lblLogo);
             panelTop.Controls.Add(txtSearch);
@@ -85,6 +87,21 @@ namespace WinFormsApp7
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(1160, 55);
             panelTop.TabIndex = 0;
+            // 
+            // archivedBtn
+            // 
+            archivedBtn.BackColor = Color.DarkOrange;
+            archivedBtn.FlatAppearance.BorderSize = 0;
+            archivedBtn.FlatStyle = FlatStyle.Flat;
+            archivedBtn.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            archivedBtn.ForeColor = Color.White;
+            archivedBtn.Location = new Point(865, 12);
+            archivedBtn.Name = "archivedBtn";
+            archivedBtn.Size = new Size(110, 30);
+            archivedBtn.TabIndex = 31;
+            archivedBtn.Text = "Archived Songs";
+            archivedBtn.UseVisualStyleBackColor = false;
+            archivedBtn.Click += archivedBtn_Click;
             // 
             // btnTest
             // 
@@ -121,9 +138,10 @@ namespace WinFormsApp7
             txtSearch.ForeColor = Color.FromArgb(120, 125, 170);
             txtSearch.Location = new Point(260, 14);
             txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search tracks or artists...";
             txtSearch.Size = new Size(380, 25);
             txtSearch.TabIndex = 1;
-            txtSearch.Text = "Search tracks or artists...";
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnSearch
             // 
@@ -190,6 +208,19 @@ namespace WinFormsApp7
             panelRight.Name = "panelRight";
             panelRight.Size = new Size(291, 600);
             panelRight.TabIndex = 2;
+            // 
+            // lblTrack
+            // 
+            lblTrack.BackColor = Color.FromArgb(40, 42, 74);
+            lblTrack.BorderStyle = BorderStyle.None;
+            lblTrack.Font = new System.Drawing.Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTrack.ForeColor = Color.White;
+            lblTrack.Location = new Point(15, 245);
+            lblTrack.Name = "lblTrack";
+            lblTrack.ReadOnly = true;
+            lblTrack.Size = new Size(183, 26);
+            lblTrack.TabIndex = 32;
+            lblTrack.Text = "No Song Selected";
             // 
             // txtLanguage
             // 
@@ -661,19 +692,6 @@ namespace WinFormsApp7
             btnCrudCancel.Text = "✕ Cancel";
             btnCrudCancel.UseVisualStyleBackColor = false;
             // 
-            // lblTrack
-            // 
-            lblTrack.BackColor = Color.FromArgb(40, 42, 74);
-            lblTrack.BorderStyle = BorderStyle.None;
-            lblTrack.Font = new System.Drawing.Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTrack.ForeColor = Color.White;
-            lblTrack.Location = new Point(15, 245);
-            lblTrack.Name = "lblTrack";
-            lblTrack.ReadOnly = true;
-            lblTrack.Size = new Size(183, 26);
-            lblTrack.TabIndex = 32;
-            lblTrack.Text = "No Song Selected";
-            // 
             // MainForm
             // 
             BackColor = Color.FromArgb(26, 27, 50);
@@ -688,6 +706,7 @@ namespace WinFormsApp7
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SpotiPlay";
+            FormClosed += MainForm_FormClosed;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelRight.ResumeLayout(false);
@@ -755,5 +774,6 @@ namespace WinFormsApp7
         private TextBox txtLanguage;
         private Label lblLanguage;
         private TextBox lblTrack;
+        private Button archivedBtn;
     }
 }

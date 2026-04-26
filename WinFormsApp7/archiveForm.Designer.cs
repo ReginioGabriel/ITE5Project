@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(archiveForm));
             dataGridView1 = new DataGridView();
             label1 = new Label();
@@ -39,6 +40,8 @@
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             label2 = new Label();
+            txtSearch = new TextBox();
+            _searchTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
@@ -50,7 +53,7 @@
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(40, 82);
@@ -64,11 +67,12 @@
             // 
             label1.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
             label1.ForeColor = SystemColors.ControlLight;
-            label1.Location = new Point(40, 23);
+            label1.Location = new Point(55, 23);
             label1.Name = "label1";
             label1.Size = new Size(222, 39);
             label1.TabIndex = 1;
-            label1.Text = "Trash";
+            label1.Text = "Archives";
+            label1.Click += label1_Click;
             // 
             // button1
             // 
@@ -143,10 +147,10 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Image = Properties.Resources._672919195_2165170284268995_7824588291765910815_n;
-            pictureBox1.Location = new Point(12, -2);
+            pictureBox1.Image = Properties.Resources.logo;
+            pictureBox1.Location = new Point(12, 1);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(37, 41);
+            pictureBox1.Size = new Size(37, 31);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 7;
             pictureBox1.TabStop = false;
@@ -154,7 +158,7 @@
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(12, 38);
+            pictureBox2.Location = new Point(12, 35);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(37, 41);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
@@ -170,12 +174,26 @@
             label2.TabIndex = 9;
             label2.Text = " Archived songs are placed here and can be retrieved or permanently deleted";
             // 
+            // txtSearch
+            // 
+            txtSearch.BackColor = Color.FromArgb(50, 53, 90);
+            txtSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtSearch.Font = new Font("Segoe UI", 10F);
+            txtSearch.ForeColor = Color.FromArgb(120, 125, 170);
+            txtSearch.Location = new Point(438, 35);
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search tracks or artists...";
+            txtSearch.Size = new Size(380, 25);
+            txtSearch.TabIndex = 10;
+            txtSearch.TextChanged += txtSearch_TextChanged;
+            // 
             // archiveForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(26, 27, 50);
             ClientSize = new Size(1158, 677);
+            Controls.Add(txtSearch);
             Controls.Add(label2);
             Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
@@ -187,11 +205,13 @@
             Controls.Add(label1);
             Controls.Add(dataGridView1);
             Name = "archiveForm";
+            StartPosition = FormStartPosition.CenterScreen;
             FormClosed += archiveForm_FormClosed;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -206,5 +226,7 @@
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private Label label2;
+        private TextBox txtSearch;
+        private System.Windows.Forms.Timer _searchTimer;
     }
 }
