@@ -29,31 +29,7 @@ namespace WinFormsApp7
             LoadTracks();
             TrackSession();
         }
-
-        private void archiveForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (_mainform != null && !_mainform.IsDisposed)
-                _mainform.Show();
-        }
-
-        private int GetSelectedArchiveId()
-        {
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Please select a track first.", "No Selection",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return -1;
-            }
-
-            return Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["archiveNumID"].Value);
-        }
-
-        private string GetSelectedTitle()
-        {
-            if (dataGridView1.SelectedRows.Count == 0) return "";
-            return Convert.ToString(dataGridView1.SelectedRows[0].Cells["Title"].Value) ?? "";
-        }
-
+        #region styles and load
         private void StyleGrid()
         {
             dataGridView1.BackgroundColor = Color.FromArgb(30, 34, 57);
@@ -149,8 +125,9 @@ namespace WinFormsApp7
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        #endregion
         #region Buttons
+        #region delete button
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
@@ -233,7 +210,8 @@ namespace WinFormsApp7
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        #endregion
+        #region Retrieve Button
         private void btnRetrieve_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
@@ -337,22 +315,27 @@ namespace WinFormsApp7
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        #endregion
+        #region Select All Button
         private void btnSelectAll_Click(object sender, EventArgs e)
         {
             dataGridView1.SelectAll();
         }
-
+        #endregion
+        #region Search Bar
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             _searchTimer.Stop();// para di lag previous kasi kada letter load ng tracks so eto nag wait for user to stop typing then load tracks
             _searchTimer.Start();
         }
+        #endregion
+        #region Return Button
         private void btnReturn_Click(object sender, EventArgs e)
         {
             _mainform.Show();
             this.Hide();
         }
+        #endregion
         #endregion
 
         #region Menu Bar
