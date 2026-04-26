@@ -179,6 +179,7 @@
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "LoginForm";
             ShowIcon = false;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Login Form";
             FormClosed += LoginForm_FormClosed;
             Load += LoginForm_Load;

@@ -13,7 +13,7 @@ namespace WinFormsApp7
     public partial class LoginForm : Form
     {
         const string connString = "server=mysql-67-rhenzdaryl07111976-a59e.g.aivencloud.com;port=20563;database=Song_DB;uid=avnadmin;pwd=AVNS_385JfMsNN_Fh3urzWqr;SslMode=Required;";
-        private readonly MySqlConnection con = new(connString);
+        //private readonly MySqlConnection con = new(connString);
 
         public LoginForm()
         {
@@ -121,36 +121,39 @@ namespace WinFormsApp7
 
             try
             {
-                con.Open();
-
-                using var cmd = new MySqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password);
-
-                using var reader = cmd.ExecuteReader();
-
-                if (reader.Read())
+                using (MySqlConnection conn = new MySqlConnection(connString))
                 {
-                    // ✅ User found — store in Session
-                    Session.CurrentUserId = reader.GetInt32("UserID");
-                    Session.CurrentUsername = reader.GetString("Username");
+                    conn.Open();
 
-                    // Open SpotiPlay main form
-                    MainForm main = new MainForm();
+                    using var cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
 
-                    main.FormClosed += (s, args) =>
+                    using var reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        this.Close();
-                    };
+                        // ✅ User found — store in Session
+                        Session.CurrentUserId = reader.GetInt32("UserID");
+                        Session.CurrentUsername = reader.GetString("Username");
 
-                    main.Show();
-                    this.Hide();
-                }
-                else
-                {
-                    // ❌ No matching user found
-                    MessageBox.Show("Invalid username or password.", "Login Failed",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // Open SpotiPlay main form
+                        MainForm main = new MainForm();
+
+                        main.FormClosed += (s, args) =>
+                        {
+                            this.Close();
+                        };
+
+                        main.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        // ❌ No matching user found
+                        MessageBox.Show("Invalid username or password.", "Login Failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
