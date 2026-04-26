@@ -19,6 +19,10 @@ namespace WinFormsApp7
         public static class AppConfig
         {
             // Where user-uploaded songs are stored
+            public static string songCoverImg = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "SpotiEwan", "coverImg"
+            );
             public static string SongsFolder = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "YourAppName", "songs"

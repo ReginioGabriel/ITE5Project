@@ -34,17 +34,25 @@
             label1 = new Label();
             button1 = new Button();
             button2 = new Button();
-            lblCount = new Label();
-            button3 = new Button();
             button4 = new Button();
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             label2 = new Label();
             txtSearch = new TextBox();
             _searchTimer = new System.Windows.Forms.Timer(components);
+            toolStrip1 = new ToolStrip();
+            toolStripButton3 = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripButton2 = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripButton1 = new ToolStripButton();
+            toolStripLabel1 = new ToolStripLabel();
+            toolStripLabel2 = new ToolStripLabel();
+            toolStripSeparator3 = new ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // dataGridView1
@@ -56,7 +64,7 @@
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(40, 82);
+            dataGridView1.Location = new Point(34, 143);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -67,12 +75,12 @@
             // 
             label1.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
             label1.ForeColor = SystemColors.ControlLight;
-            label1.Location = new Point(55, 23);
+            label1.Location = new Point(55, 72);
             label1.Name = "label1";
             label1.Size = new Size(222, 39);
             label1.TabIndex = 1;
             label1.Text = "Archives";
-            label1.Click += label1_Click;
+            
             // 
             // button1
             // 
@@ -81,7 +89,7 @@
             button1.FlatStyle = FlatStyle.Popup;
             button1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             button1.ForeColor = SystemColors.ControlLight;
-            button1.Location = new Point(218, 460);
+            button1.Location = new Point(287, 525);
             button1.Name = "button1";
             button1.Size = new Size(153, 44);
             button1.TabIndex = 2;
@@ -96,39 +104,13 @@
             button2.FlatStyle = FlatStyle.Popup;
             button2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             button2.ForeColor = SystemColors.ControlLight;
-            button2.Location = new Point(558, 460);
+            button2.Location = new Point(627, 525);
             button2.Name = "button2";
             button2.Size = new Size(153, 44);
             button2.TabIndex = 3;
             button2.Text = "Delete";
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
-            // 
-            // lblCount
-            // 
-            lblCount.BackColor = Color.FromArgb(26, 30, 50);
-            lblCount.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
-            lblCount.ForeColor = SystemColors.ControlLightLight;
-            lblCount.Location = new Point(848, 23);
-            lblCount.Name = "lblCount";
-            lblCount.Padding = new Padding(5);
-            lblCount.Size = new Size(222, 56);
-            lblCount.TabIndex = 4;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.FromArgb(26, 30, 50);
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatStyle = FlatStyle.Popup;
-            button3.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            button3.ForeColor = SystemColors.ControlLight;
-            button3.Location = new Point(731, 460);
-            button3.Name = "button3";
-            button3.Size = new Size(153, 44);
-            button3.TabIndex = 5;
-            button3.Text = "Return";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
             // 
             // button4
             // 
@@ -137,7 +119,7 @@
             button4.FlatStyle = FlatStyle.Popup;
             button4.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             button4.ForeColor = SystemColors.ControlLight;
-            button4.Location = new Point(388, 460);
+            button4.Location = new Point(457, 525);
             button4.Name = "button4";
             button4.Size = new Size(153, 44);
             button4.TabIndex = 6;
@@ -148,17 +130,18 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.logo;
-            pictureBox1.Location = new Point(12, 1);
+            pictureBox1.Location = new Point(12, 59);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(37, 31);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 7;
             pictureBox1.TabStop = false;
+            
             // 
             // pictureBox2
             // 
             pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(12, 35);
+            pictureBox2.Location = new Point(12, 96);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(37, 41);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
@@ -168,7 +151,7 @@
             // label2
             // 
             label2.ForeColor = SystemColors.GrayText;
-            label2.Location = new Point(55, 64);
+            label2.Location = new Point(55, 113);
             label2.Name = "label2";
             label2.Size = new Size(403, 15);
             label2.TabIndex = 9;
@@ -180,12 +163,98 @@
             txtSearch.BorderStyle = BorderStyle.FixedSingle;
             txtSearch.Font = new Font("Segoe UI", 10F);
             txtSearch.ForeColor = Color.FromArgb(120, 125, 170);
-            txtSearch.Location = new Point(438, 35);
+            txtSearch.Location = new Point(624, 103);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search tracks or artists...";
-            txtSearch.Size = new Size(380, 25);
+            txtSearch.Size = new Size(457, 25);
             txtSearch.TabIndex = 10;
             txtSearch.TextChanged += txtSearch_TextChanged;
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.BackColor = Color.Transparent;
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripSeparator1, toolStripButton2, toolStripSeparator2, toolStripButton1, toolStripLabel1, toolStripLabel2, toolStripSeparator3 });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(1158, 25);
+            toolStrip1.TabIndex = 11;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.ForeColor = SystemColors.ControlLight;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton3.Size = new Size(97, 22);
+            toolStripButton3.Text = "Library";
+            toolStripButton3.Click += toolStripButton3_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.AutoSize = false;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Padding = new Padding(50, 0, 0, 0);
+            toolStripSeparator1.Size = new Size(6, 25);
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.AutoSize = false;
+            toolStripButton2.BackColor = Color.DarkOrange;
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton2.Enabled = false;
+            toolStripButton2.ForeColor = SystemColors.ControlLight;
+            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton2.Size = new Size(106, 22);
+            toolStripButton2.Text = "Archives";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.AutoSize = false;
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Padding = new Padding(50, 0, 0, 0);
+            toolStripSeparator2.Size = new Size(6, 25);
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.BackColor = Color.Red;
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.ForeColor = SystemColors.ControlLight;
+            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton1.Size = new Size(99, 22);
+            toolStripButton1.Text = "Logout";
+            toolStripButton1.Click += toolStripButton1_Click;
+            // 
+            // toolStripLabel1
+            // 
+            toolStripLabel1.Alignment = ToolStripItemAlignment.Right;
+            toolStripLabel1.AutoSize = false;
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new Size(200, 22);
+            toolStripLabel1.Text = "toolStripLabel1";
+            toolStripLabel1.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripLabel2
+            // 
+            toolStripLabel2.Alignment = ToolStripItemAlignment.Right;
+            toolStripLabel2.AutoSize = false;
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new Size(200, 22);
+            toolStripLabel2.Text = "toolStripLabel2";
+            toolStripLabel2.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 25);
             // 
             // archiveForm
             // 
@@ -193,13 +262,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(26, 27, 50);
             ClientSize = new Size(1158, 677);
+            Controls.Add(toolStrip1);
             Controls.Add(txtSearch);
             Controls.Add(label2);
             Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
             Controls.Add(button4);
-            Controls.Add(button3);
-            Controls.Add(lblCount);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(label1);
@@ -210,6 +278,8 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -220,13 +290,20 @@
         private Label label1;
         private Button button1;
         private Button button2;
-        private Label lblCount;
-        private Button button3;
         private Button button4;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private Label label2;
         private TextBox txtSearch;
         private System.Windows.Forms.Timer _searchTimer;
+        private ToolStrip toolStrip1;
+        private ToolStripButton toolStripButton3;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton toolStripButton2;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton toolStripButton1;
+        private ToolStripLabel toolStripLabel1;
+        private ToolStripLabel toolStripLabel2;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
