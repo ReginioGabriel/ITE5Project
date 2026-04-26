@@ -229,6 +229,7 @@ namespace WinFormsApp7
 
             dtpReleaseDate.Enabled = editing;
             btnSave.Visible = editing;
+            picNowPlaying.Visible = true;
         }
 
 
@@ -420,6 +421,8 @@ namespace WinFormsApp7
             txtArtist.Clear();
             txtAlbum.Clear();
             txtGenre.Clear();
+            txtLanguage.Clear();
+            lblDuration.Text = "";
             dtpReleaseDate.CustomFormat = " ";
         }
 
@@ -557,7 +560,7 @@ namespace WinFormsApp7
 
             if (_selectedSong.IsPreset)
             {
-                MessageBox.Show("Preset songs cannot be edited.", "Not Allowed",
+                MessageBox.Show("Only songs you have added can be edited.", "Not Allowed",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }

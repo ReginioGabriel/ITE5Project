@@ -28,6 +28,7 @@ namespace WinFormsApp7
             btnAddTrack = new Button();
             panelLeft = new Panel();
             panelRight = new Panel();
+            picNowPlaying = new PictureBox();
             lblTrack = new TextBox();
             txtLanguage = new TextBox();
             lblLanguage = new Label();
@@ -40,7 +41,6 @@ namespace WinFormsApp7
             btnEdit = new Button();
             btnRemove = new Button();
             lblNowPlaying = new Label();
-            picNowPlaying = new PictureBox();
             lblArtist = new Label();
             lblAlbum = new Label();
             lblGenre = new Label();
@@ -141,6 +141,7 @@ namespace WinFormsApp7
             txtSearch.PlaceholderText = "Search tracks or artists...";
             txtSearch.Size = new Size(380, 25);
             txtSearch.TabIndex = 1;
+            txtSearch.TextAlign = HorizontalAlignment.Center;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnSearch
@@ -185,6 +186,7 @@ namespace WinFormsApp7
             // panelRight
             // 
             panelRight.BackColor = Color.FromArgb(40, 42, 74);
+            panelRight.Controls.Add(picNowPlaying);
             panelRight.Controls.Add(lblTrack);
             panelRight.Controls.Add(txtLanguage);
             panelRight.Controls.Add(lblLanguage);
@@ -197,7 +199,6 @@ namespace WinFormsApp7
             panelRight.Controls.Add(btnEdit);
             panelRight.Controls.Add(btnRemove);
             panelRight.Controls.Add(lblNowPlaying);
-            panelRight.Controls.Add(picNowPlaying);
             panelRight.Controls.Add(lblArtist);
             panelRight.Controls.Add(lblAlbum);
             panelRight.Controls.Add(lblGenre);
@@ -208,6 +209,18 @@ namespace WinFormsApp7
             panelRight.Name = "panelRight";
             panelRight.Size = new Size(291, 600);
             panelRight.TabIndex = 2;
+            // 
+            // picNowPlaying
+            // 
+            picNowPlaying.BackColor = Color.FromArgb(40, 42, 74);
+            picNowPlaying.Image = Properties.Resources.Record_Player_Dj_GIF_by_Socialize;
+            picNowPlaying.Location = new Point(19, 72);
+            picNowPlaying.Name = "picNowPlaying";
+            picNowPlaying.Size = new Size(249, 166);
+            picNowPlaying.SizeMode = PictureBoxSizeMode.Zoom;
+            picNowPlaying.TabIndex = 1;
+            picNowPlaying.TabStop = false;
+            picNowPlaying.Visible = false;
             // 
             // lblTrack
             // 
@@ -365,16 +378,6 @@ namespace WinFormsApp7
             lblNowPlaying.TabIndex = 0;
             lblNowPlaying.Text = "NOW PLAYING";
             lblNowPlaying.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // picNowPlaying
-            // 
-            picNowPlaying.BackColor = Color.FromArgb(70, 73, 110);
-            picNowPlaying.Location = new Point(15, 72);
-            picNowPlaying.Name = "picNowPlaying";
-            picNowPlaying.Size = new Size(253, 160);
-            picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
-            picNowPlaying.TabIndex = 1;
-            picNowPlaying.TabStop = false;
             // 
             // lblArtist
             // 

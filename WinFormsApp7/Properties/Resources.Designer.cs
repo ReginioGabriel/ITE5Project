@@ -89,5 +89,25 @@ namespace WinFormsApp7.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Record_Player_Dj_GIF_by_Socialize {
+            get {
+                object obj = ResourceManager.GetObject("Record Player Dj GIF by Socialize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap XNYN {
+            get {
+                object obj = ResourceManager.GetObject("XNYN", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
