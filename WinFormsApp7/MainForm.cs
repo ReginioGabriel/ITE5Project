@@ -90,10 +90,11 @@ namespace WinFormsApp7
             flowPanel.Controls.Clear();
 
             string query = @"
-            SELECT s.song_id, s.user_id, s.title, s.artist, s.album, s.release_date,
-                   s.genre, s.language, s.file_path, s.duration, s.is_preset
-            FROM SongsTbl s
-            WHERE
+        SELECT s.song_id, s.user_id, s.title, s.artist, s.album, s.release_date,
+               s.genre, s.language, s.file_path, s.duration, s.is_preset
+        FROM SongsTbl s
+        WHERE
+            (
                 (
                     s.is_preset = 1
                     AND NOT EXISTS (
@@ -109,7 +110,17 @@ namespace WinFormsApp7
                     s.is_preset = 0
                     AND s.user_id = @uid
                 )
-            ORDER BY s.is_preset DESC, s.title ASC";
+            )
+            AND
+            (
+                @term = ''
+                OR s.title LIKE @search
+                OR s.artist LIKE @search
+                OR s.album LIKE @search
+                OR s.genre LIKE @search
+                OR s.language LIKE @search
+            )
+        ORDER BY s.is_preset DESC, s.title ASC;";
 
             try
             {
@@ -118,7 +129,8 @@ namespace WinFormsApp7
 
                 using var cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
-                cmd.Parameters.AddWithValue("@search", $"%{searchTerm}%");
+                cmd.Parameters.AddWithValue("@term", searchTerm.Trim());
+                cmd.Parameters.AddWithValue("@search", $"%{searchTerm.Trim()}%");
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
