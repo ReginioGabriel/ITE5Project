@@ -12,7 +12,7 @@ namespace WinFormsApp7
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             AppConfig.Initialize();
-            Application.Run(new MainForm());
+            Application.Run(new LoginForm());
 
         }
 

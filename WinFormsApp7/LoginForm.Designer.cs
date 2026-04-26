@@ -179,7 +179,8 @@
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "LoginForm";
             ShowIcon = false;
-            Text = "Form2";
+            Text = "Login Form";
+            FormClosed += LoginForm_FormClosed;
             Load += LoginForm_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();

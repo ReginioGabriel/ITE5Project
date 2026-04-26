@@ -125,19 +125,26 @@ namespace WinFormsApp7
 
                 using var cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password); // hash this if using hashed passwords
+                cmd.Parameters.AddWithValue("@password", password);
 
                 using var reader = cmd.ExecuteReader();
 
                 if (reader.Read())
                 {
-                    //// ✅ User found — store in Session
-                    //Session.CurrentUserId = reader.GetInt32("UserID");
-                    //Session.CurrentUsername = reader.GetString("Username");
+                    // ✅ User found — store in Session
+                    Session.CurrentUserId = reader.GetInt32("UserID");
+                    Session.CurrentUsername = reader.GetString("Username");
 
                     // Open SpotiPlay main form
-                    new MainForm().Show();
-                    this.Hide(); // or this.Close()
+                    MainForm main = new MainForm();
+
+                    main.FormClosed += (s, args) =>
+                    {
+                        this.Close();
+                    };
+
+                    main.Show();
+                    this.Hide();
                 }
                 else
                 {
@@ -183,6 +190,11 @@ namespace WinFormsApp7
         private void LoginForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void LoginForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

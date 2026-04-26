@@ -70,32 +70,34 @@ namespace WinFormsApp7
             btnCrudCancel = new Button();
             trackpad = new System.Windows.Forms.Timer(components);
             openFileDialog1 = new OpenFileDialog();
-            toolStrip1 = new ToolStrip();
-            toolStripButton3 = new ToolStripButton();
+            MenuBar = new ToolStrip();
+            MenuCollection = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            toolStripButton2 = new ToolStripButton();
+            MenuArchive = new ToolStripButton();
             toolStripSeparator2 = new ToolStripSeparator();
-            toolStripButton1 = new ToolStripButton();
+            MenuLogout = new ToolStripButton();
             toolStripLabel1 = new ToolStripLabel();
             toolStripLabel2 = new ToolStripLabel();
-            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripButton4 = new ToolStripButton();
+            btnRefresh = new Button();
             panelTop.SuspendLayout();
             panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNowPlaying).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
             panelCrud.SuspendLayout();
-            toolStrip1.SuspendLayout();
+            MenuBar.SuspendLayout();
             SuspendLayout();
             // 
             // panelTop
             // 
             panelTop.BackColor = Color.FromArgb(26, 27, 50);
+            panelTop.Controls.Add(btnRefresh);
             panelTop.Controls.Add(btnTest);
             panelTop.Controls.Add(lblLogo);
             panelTop.Controls.Add(txtSearch);
             panelTop.Controls.Add(btnSearch);
             panelTop.Controls.Add(btnAddTrack);
-            panelTop.Location = new Point(2, 26);
+            panelTop.Location = new Point(2, 45);
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(1160, 55);
             panelTop.TabIndex = 0;
@@ -139,7 +141,6 @@ namespace WinFormsApp7
             txtSearch.Size = new Size(380, 25);
             txtSearch.TabIndex = 1;
             txtSearch.TextAlign = HorizontalAlignment.Center;
-            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnSearch
             // 
@@ -175,7 +176,7 @@ namespace WinFormsApp7
             // 
             panelLeft.AutoScroll = true;
             panelLeft.BackColor = Color.FromArgb(40, 42, 74);
-            panelLeft.Location = new Point(30, 87);
+            panelLeft.Location = new Point(30, 111);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(784, 600);
             panelLeft.TabIndex = 1;
@@ -202,7 +203,7 @@ namespace WinFormsApp7
             panelRight.Controls.Add(lblReleaseDate);
             panelRight.Controls.Add(trackBar);
             panelRight.Controls.Add(btnPlayPause);
-            panelRight.Location = new Point(838, 87);
+            panelRight.Location = new Point(838, 110);
             panelRight.Name = "panelRight";
             panelRight.Size = new Size(291, 600);
             panelRight.TabIndex = 2;
@@ -211,9 +212,9 @@ namespace WinFormsApp7
             // 
             picNowPlaying.BackColor = Color.FromArgb(40, 42, 74);
             picNowPlaying.Image = Properties.Resources.Record_Player_Dj_GIF_by_Socialize;
-            picNowPlaying.Location = new Point(19, 72);
+            picNowPlaying.Location = new Point(15, 57);
             picNowPlaying.Name = "picNowPlaying";
-            picNowPlaying.Size = new Size(249, 166);
+            picNowPlaying.Size = new Size(253, 173);
             picNowPlaying.SizeMode = PictureBoxSizeMode.Zoom;
             picNowPlaying.TabIndex = 1;
             picNowPlaying.TabStop = false;
@@ -375,18 +376,6 @@ namespace WinFormsApp7
             lblNowPlaying.TabIndex = 0;
             lblNowPlaying.Text = "NOW PLAYING";
             lblNowPlaying.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // picNowPlaying
-            // 
-            picNowPlaying.BackColor = Color.FromArgb(70, 73, 110);
-            picNowPlaying.Enabled = false;
-            picNowPlaying.Location = new Point(15, 72);
-            picNowPlaying.Name = "picNowPlaying";
-            picNowPlaying.Size = new Size(253, 160);
-            picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
-            picNowPlaying.TabIndex = 1;
-            picNowPlaying.TabStop = false;
-            picNowPlaying.Click += picNowPlaying_Click;
             // 
             // lblArtist
             // 
@@ -710,68 +699,73 @@ namespace WinFormsApp7
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
-            // toolStrip1
+            // MenuBar
             // 
-            toolStrip1.BackColor = Color.Transparent;
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripSeparator1, toolStripButton2, toolStripSeparator2, toolStripButton1, toolStripLabel1, toolStripLabel2, toolStripSeparator3 });
-            toolStrip1.Location = new Point(0, 0);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1158, 25);
-            toolStrip1.TabIndex = 4;
-            toolStrip1.Text = "toolStrip1";
+            MenuBar.BackColor = Color.Transparent;
+            MenuBar.Font = new System.Drawing.Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            MenuBar.Items.AddRange(new ToolStripItem[] { MenuCollection, toolStripSeparator1, MenuArchive, toolStripSeparator2, MenuLogout, toolStripLabel1, toolStripLabel2, toolStripButton4 });
+            MenuBar.Location = new Point(0, 0);
+            MenuBar.Margin = new Padding(10);
+            MenuBar.Name = "MenuBar";
+            MenuBar.Padding = new Padding(20, 5, 10, 5);
+            MenuBar.Size = new Size(1158, 45);
+            MenuBar.TabIndex = 4;
+            MenuBar.Text = "toolStrip1";
             // 
-            // toolStripButton3
+            // MenuCollection
             // 
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton3.Enabled = false;
-            toolStripButton3.ForeColor = SystemColors.ControlLight;
-            toolStripButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripButton3.Image");
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Padding = new Padding(50, 0, 0, 0);
-            toolStripButton3.Size = new Size(97, 22);
-            toolStripButton3.Text = "Library";
+            MenuCollection.BackColor = Color.Cyan;
+            MenuCollection.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            MenuCollection.Enabled = false;
+            MenuCollection.ForeColor = SystemColors.ActiveCaptionText;
+            MenuCollection.Image = (System.Drawing.Image)resources.GetObject("MenuCollection.Image");
+            MenuCollection.ImageTransparentColor = Color.Magenta;
+            MenuCollection.Name = "MenuCollection";
+            MenuCollection.Padding = new Padding(50, 0, 0, 0);
+            MenuCollection.Size = new Size(133, 32);
+            MenuCollection.Text = "Collection";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.AutoSize = false;
+            toolStripSeparator1.Margin = new Padding(10, 5, 10, 5);
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Padding = new Padding(50, 0, 0, 0);
             toolStripSeparator1.Size = new Size(6, 25);
             // 
-            // toolStripButton2
+            // MenuArchive
             // 
-            toolStripButton2.AutoSize = false;
-            toolStripButton2.BackColor = Color.DarkOrange;
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton2.ForeColor = SystemColors.ControlLight;
-            toolStripButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripButton2.Image");
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Padding = new Padding(50, 0, 0, 0);
-            toolStripButton2.Size = new Size(106, 22);
-            toolStripButton2.Text = "Archives";
-            toolStripButton2.Click += toolStripButton2_Click;
+            MenuArchive.BackColor = Color.Yellow;
+            MenuArchive.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            MenuArchive.ForeColor = SystemColors.ActiveCaptionText;
+            MenuArchive.ImageScaling = ToolStripItemImageScaling.None;
+            MenuArchive.ImageTransparentColor = Color.Magenta;
+            MenuArchive.Name = "MenuArchive";
+            MenuArchive.Padding = new Padding(50, 0, 0, 0);
+            MenuArchive.Size = new Size(116, 32);
+            MenuArchive.Text = "Archive";
+            MenuArchive.Click += MenuArchive_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.AutoSize = false;
+            toolStripSeparator2.Margin = new Padding(10, 5, 10, 5);
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Padding = new Padding(50, 0, 0, 0);
             toolStripSeparator2.Size = new Size(6, 25);
             // 
-            // toolStripButton1
+            // MenuLogout
             // 
-            toolStripButton1.BackColor = Color.Red;
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton1.ForeColor = SystemColors.ControlLight;
-            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Padding = new Padding(50, 0, 0, 0);
-            toolStripButton1.Size = new Size(99, 22);
-            toolStripButton1.Text = "Logout";
-            toolStripButton1.Click += toolStripButton1_Click;
+            MenuLogout.BackColor = Color.Red;
+            MenuLogout.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            MenuLogout.ForeColor = SystemColors.ActiveCaptionText;
+            MenuLogout.ImageScaling = ToolStripItemImageScaling.None;
+            MenuLogout.ImageTransparentColor = Color.Magenta;
+            MenuLogout.Name = "MenuLogout";
+            MenuLogout.Padding = new Padding(50, 0, 0, 0);
+            MenuLogout.Size = new Size(113, 32);
+            MenuLogout.Text = "Logout";
+            MenuLogout.Click += MenuLogOut_Click;
             // 
             // toolStripLabel1
             // 
@@ -791,16 +785,35 @@ namespace WinFormsApp7
             toolStripLabel2.Text = "toolStripLabel2";
             toolStripLabel2.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // toolStripSeparator3
+            // toolStripButton4
             // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(6, 25);
+            toolStripButton4.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButton4.Image = (System.Drawing.Image)resources.GetObject("toolStripButton4.Image");
+            toolStripButton4.ImageTransparentColor = Color.Magenta;
+            toolStripButton4.Name = "toolStripButton4";
+            toolStripButton4.Size = new Size(23, 32);
+            toolStripButton4.Text = "toolStripButton4";
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.BackColor = Color.DarkCyan;
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(862, 11);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(92, 30);
+            btnRefresh.TabIndex = 31;
+            btnRefresh.Text = "🔄 Refresh";
+            btnRefresh.UseVisualStyleBackColor = false;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // MainForm
             // 
             BackColor = Color.FromArgb(26, 27, 50);
             ClientSize = new Size(1158, 718);
-            Controls.Add(toolStrip1);
+            Controls.Add(MenuBar);
             Controls.Add(panelTop);
             Controls.Add(panelLeft);
             Controls.Add(panelRight);
@@ -811,7 +824,6 @@ namespace WinFormsApp7
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SpotiPlay";
-            FormClosed += MainForm_FormClosed;
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelRight.ResumeLayout(false);
@@ -820,8 +832,8 @@ namespace WinFormsApp7
             ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
             panelCrud.ResumeLayout(false);
             panelCrud.PerformLayout();
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
+            MenuBar.ResumeLayout(false);
+            MenuBar.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -884,14 +896,15 @@ namespace WinFormsApp7
         private TextBox lblTrack;
         private System.Windows.Forms.Timer trackpad;
         private OpenFileDialog openFileDialog1;
-        private ToolStrip toolStrip1;
+        private ToolStrip MenuBar;
         private ToolStripLabel toolStripLabel1;
         private ToolStripLabel toolStripLabel2;
-        private ToolStripButton toolStripButton3;
+        private ToolStripButton MenuCollection;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton toolStripButton2;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripButton toolStripButton1;
-        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton MenuArchive;
+        private ToolStripButton MenuLogout;
+        private ToolStripButton toolStripButton4;
+        private Button btnRefresh;
     }
 }

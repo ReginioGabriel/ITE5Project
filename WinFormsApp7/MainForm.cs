@@ -28,8 +28,6 @@ namespace WinFormsApp7
         public MainForm()
         {
             InitializeComponent();
-            Session.CurrentUserId = 1;
-
             trackpad.Interval = 500;
             trackpad.Tick += (s, e) =>
             {
@@ -55,7 +53,7 @@ namespace WinFormsApp7
             panelLeft.Controls.Add(flowPanel);
 
             LoadTracks();
-            toolbartracker();
+            TrackSession();
 
         }
 
@@ -63,6 +61,10 @@ namespace WinFormsApp7
         {
             StopAndDisposeAudio();
             base.OnFormClosing(e);
+        }
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
 
         private class SongRow
@@ -80,6 +82,7 @@ namespace WinFormsApp7
             public DateTime? ReleaseDate { get; set; }
         }
 
+
         #region Song Build Functions
         private void LoadTracks(string searchTerm = "")
         {
@@ -87,19 +90,25 @@ namespace WinFormsApp7
             flowPanel.Controls.Clear();
 
             string query = @"
-            SELECT s.song_id, s.title, s.artist, s.album, s.genre, s.language,
-                   s.release_date, s.duration, s.file_path, s.file_pathImg, s.is_preset
+            SELECT s.song_id, s.user_id, s.title, s.artist, s.album, s.release_date,
+                   s.genre, s.language, s.file_path, s.duration, s.is_preset
             FROM SongsTbl s
-            LEFT JOIN HiddenPresetSongs h
-                   ON h.song_id = s.song_id
-                  AND h.user_id = @uid
             WHERE
                 (
-                    (s.is_preset = 1 AND h.song_id IS NULL)
-                    OR
-                    (s.user_id = @uid)
+                    s.is_preset = 1
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM archiveTBL a
+                        WHERE a.song_id = s.song_id
+                          AND a.user_id = @uid
+                          AND a.is_preset = 1
+                    )
                 )
-                AND (s.title LIKE @search OR s.artist LIKE @search)
+                OR
+                (
+                    s.is_preset = 0
+                    AND s.user_id = @uid
+                )
             ORDER BY s.is_preset DESC, s.title ASC";
 
             try
@@ -127,7 +136,6 @@ namespace WinFormsApp7
                             : reader.GetDateTime("release_date"),
                         Duration = reader.IsDBNull(reader.GetOrdinal("duration")) ? "N/A" : reader.GetString("duration"),
                         FilePath = reader.IsDBNull(reader.GetOrdinal("file_path")) ? "" : reader.GetString("file_path"),
-                        CoverPath = reader.IsDBNull(reader.GetOrdinal("file_pathImg")) ? "" : reader.GetString("file_pathImg"),
                         IsPreset = reader.GetBoolean("is_preset")
                     };
 
@@ -211,7 +219,6 @@ namespace WinFormsApp7
             txtLanguage.Text = song.Language;
             lblDuration.Text = song.Duration;
 
-            LoadCoverArt(song);
             dtpReleaseDate.Visible = true;
             dtpReleaseDate.Format = DateTimePickerFormat.Custom;
 
@@ -230,32 +237,6 @@ namespace WinFormsApp7
 
             SetEditMode(false);
             btnPlayPause.Enabled = true;
-        }
-        private string GetUsername(int userId)
-        {
-            try
-            {
-                using var conn = new MySqlConnection(connString);
-                conn.Open();
-
-                string sql = "SELECT Username FROM UserTbl WHERE UserID = @id";
-                using var cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", userId);
-
-                var result = cmd.ExecuteScalar();
-                return result?.ToString() ?? "Unknown";
-            }
-            catch
-            {
-                return "Unknown";
-            }
-        }
-        private void toolbartracker()
-        {
-            toolStripLabel2.Text = $"Logged in as: {GetUsername(Session.CurrentUserId)}";
-            toolStripLabel2.ForeColor = Color.White;
-            toolStripLabel1.Text = $"Total Tracks: {flowPanel.Controls.Count}";
-            toolStripLabel1.ForeColor = Color.White;
         }
         private void SetEditMode(bool editing)
         {
@@ -389,8 +370,8 @@ namespace WinFormsApp7
             if (song == null) return;
 
             string message = song.IsPreset
-                ? $"Hide preset song \"{song.Title}\" from your list?"
-                : $"Archive \"{song.Title}\" from your library?\nThis can restored using the archives.";
+                ? $"Archive preset song \"{song.Title}\" from your list?"
+                : $"Archive \"{song.Title}\" from your library?\nThis can be restored using the archives.";
 
             var confirm = MessageBox.Show(
                 message,
@@ -405,39 +386,101 @@ namespace WinFormsApp7
                 using var conn = new MySqlConnection(connString);
                 conn.Open();
 
+                using var tx = conn.BeginTransaction();
+
                 if (song.IsPreset)
                 {
-                    string sql = @"
-                INSERT IGNORE INTO HiddenPresetSongs (user_id, song_id)
-                VALUES (@uid, @songid)";
+                    string presetArchiveSql = @"
+                INSERT INTO archiveTBL
+                    (song_id, user_id, title, artist, album, releasedate, genre, language, file_path, duration, is_preset, archived_at)
+                SELECT
+                    s.song_id,
+                    @uid,
+                    s.title,
+                    s.artist,
+                    s.album,
+                    s.release_date,
+                    s.genre,
+                    s.language,
+                    s.file_path,
+                    s.duration,
+                    1,
+                    NOW()
+                FROM SongsTbl s
+                WHERE s.song_id = @id
+                  AND s.is_preset = 1
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM archiveTBL a
+                      WHERE a.song_id = s.song_id
+                        AND a.user_id = @uid
+                        AND a.is_preset = 1
+                  );";
 
-                    using var cmd = new MySqlCommand(sql, conn);
+                    using var cmd = new MySqlCommand(presetArchiveSql, conn, tx);
                     cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
-                    cmd.Parameters.AddWithValue("@songid", song.SongId);
-                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@id", song.SongId);
 
-                    MessageBox.Show("Preset song hidden from your list.", "Hidden",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    int inserted = cmd.ExecuteNonQuery();
+                    tx.Commit();
+
+                    if (inserted > 0)
+                    {
+                        MessageBox.Show("Preset song moved to archive.", "Archived",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Preset song is already archived for this user.", "Already Archived",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 else
                 {
-                    // 1. Copy to archiveTBL
-                    string insertSql = @"
-                    INSERT INTO archiveTBL 
-                        (song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path, file_pathImg)
-                    SELECT song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path, file_pathImg
-                    FROM   SongsTbl
-                    WHERE  song_id = @id";
+                    string archiveSql = @"
+                INSERT INTO archiveTBL
+                    (song_id, user_id, title, artist, album, releasedate, genre, language, file_path, duration, is_preset, archived_at)
+                SELECT
+                    s.song_id,
+                    s.user_id,
+                    s.title,
+                    s.artist,
+                    s.album,
+                    s.release_date,
+                    s.genre,
+                    s.language,
+                    s.file_path,
+                    s.duration,
+                    0,
+                    NOW()
+                FROM SongsTbl s
+                WHERE s.song_id = @id
+                  AND s.user_id = @uid
+                  AND s.is_preset = 0;";
 
-                    using var insertCmd = new MySqlCommand(insertSql, conn);
-                    insertCmd.Parameters.AddWithValue("@id", song.SongId);
-                    insertCmd.ExecuteNonQuery();
+                    using var archiveCmd = new MySqlCommand(archiveSql, conn, tx);
+                    archiveCmd.Parameters.AddWithValue("@id", song.SongId);
+                    archiveCmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
 
-                    // 2. Delete from SongsTbl
-                    string deleteSql = "DELETE FROM SongsTbl WHERE song_id = @id";
-                    using var deleteCmd = new MySqlCommand(deleteSql, conn);
+                    int archived = archiveCmd.ExecuteNonQuery();
+                    if (archived == 0)
+                        throw new Exception("Song could not be archived.");
+
+                    string deleteSql = @"
+                DELETE FROM SongsTbl
+                WHERE song_id = @id
+                  AND user_id = @uid
+                  AND is_preset = 0;";
+
+                    using var deleteCmd = new MySqlCommand(deleteSql, conn, tx);
                     deleteCmd.Parameters.AddWithValue("@id", song.SongId);
-                    deleteCmd.ExecuteNonQuery();
+                    deleteCmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+
+                    int deleted = deleteCmd.ExecuteNonQuery();
+                    if (deleted == 0)
+                        throw new Exception("Song was archived but not removed from SongsTbl.");
+
+                    tx.Commit();
 
                     MessageBox.Show($"\"{song.Title}\" moved to archive.", "Archived",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -740,114 +783,20 @@ namespace WinFormsApp7
         }
         #endregion
 
-
-
-        private void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void picNowPlaying_Click(object sender, EventArgs e)
-        {
-            if (_selectedSong == null || _selectedSong.IsPreset) return;
-
-            using var dialog = new OpenFileDialog
-            {
-                Title = "Select Cover Art",
-                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp|All Files|*.*"
-            };
-
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-
-            string ext = Path.GetExtension(dialog.FileName);
-            string newFileName = $"cover_{Session.CurrentUserId}_{Guid.NewGuid()}{ext}";
-            string destPath = Path.Combine(AppConfig.songCoverImg, newFileName);
-
-            try
-            {
-                // 1. Save image file
-                Directory.CreateDirectory(AppConfig.songCoverImg);
-                System.IO.File.Copy(dialog.FileName, destPath);
-
-                // 2. Update DB
-                using var conn = new MySqlConnection(connString);
-                conn.Open();
-
-                string sql = "UPDATE SongsTbl SET file_pathImg = @cover WHERE song_id = @id AND user_id = @uid";
-                using var cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@cover", newFileName);
-                cmd.Parameters.AddWithValue("@id", _selectedSong.SongId);
-                cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
-                cmd.ExecuteNonQuery();
-
-                // 3. Update local object + refresh picturebox
-                _selectedSong.CoverPath = newFileName;
-                LoadCoverArt(_selectedSong);
-
-                MessageBox.Show("Cover art updated!", "Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to set cover:\n{ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-        }
-        private void LoadCoverArt(SongRow song)
-        {
-            // No song or no cover → clear picturebox
-            if (song == null || string.IsNullOrWhiteSpace(song.CoverPath))
-            {
-                picNowPlaying.Image = null;
-                picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
-                return;
-            }
-
-            string fullPath = song.IsPreset
-                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "songCoverImg", song.CoverPath)
-                : Path.Combine(AppConfig.songCoverImg, song.CoverPath);
-            if (!System.IO.File.Exists(fullPath))
-            {
-                picNowPlaying.Image = null;
-                return;
-            }
-
-            try
-            {
-                using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
-                picNowPlaying.Image = Image.FromStream(stream);
-                picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
-            catch
-            {
-                picNowPlaying.Image = null;
-            }
-        }
-
-        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        #region Menu Strip
+        private void MenuArchive_Click(object sender, EventArgs e)
         {
             StopAndDisposeAudio();
-            var archiveForm = new archiveForm();
+            var archiveForm = new archiveForm(this);
             archiveForm.Show();
 
             this.Hide();
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void MenuLogOut_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Are you sure you want to log out?", "Confirm Logout",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DialogResult.Yes == result)
             {
                 StopAndDisposeAudio();
@@ -857,5 +806,21 @@ namespace WinFormsApp7
                 this.Hide();
             }
         }
+        private void TrackSession()
+        {
+            toolStripLabel2.Text = $"Logged in as: {Session.CurrentUsername}";
+            toolStripLabel2.ForeColor = Color.White;
+            toolStripLabel1.Text = $"Total Tracks: {flowPanel.Controls.Count}";
+            toolStripLabel1.ForeColor = Color.White;
+        }
+
+        #endregion
+
+        #region Refresh Button
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadTracks();
+        }
+        #endregion
     }
 }
