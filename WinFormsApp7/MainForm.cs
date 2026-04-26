@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using NAudio.Wave;
 using System.Data;
@@ -21,7 +22,7 @@ namespace WinFormsApp7
         private WaveOutEvent outputDevice;
         private AudioFileReader audioFile;
         private SongRow _currentlyPlayingSong;
-
+        private bool _isDragging = false;
 
         private FlowLayoutPanel flowPanel;
         public MainForm()
@@ -29,6 +30,14 @@ namespace WinFormsApp7
             InitializeComponent();
             Session.CurrentUserId = 1;
 
+            trackpad.Interval = 500;
+            trackpad.Tick += (s, e) =>
+            {
+                if (audioFile == null || _isDragging) return;
+
+                trackBar.Maximum = (int)audioFile.TotalTime.TotalSeconds;
+                trackBar.Value = Math.Min((int)audioFile.CurrentTime.TotalSeconds, trackBar.Maximum);
+            };
             // Create inner flow panel once — never recreate it
             flowPanel = new FlowLayoutPanel
             {
@@ -46,6 +55,8 @@ namespace WinFormsApp7
             panelLeft.Controls.Add(flowPanel);
 
             LoadTracks();
+            toolbartracker();
+
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -63,6 +74,7 @@ namespace WinFormsApp7
             public string Genre { get; set; }
             public string Duration { get; set; }
             public string FilePath { get; set; }
+            public string CoverPath { get; set; }
             public bool IsPreset { get; set; }
             public string Language { get; set; }
             public DateTime? ReleaseDate { get; set; }
@@ -76,7 +88,7 @@ namespace WinFormsApp7
 
             string query = @"
             SELECT s.song_id, s.title, s.artist, s.album, s.genre, s.language,
-                   s.release_date, s.duration, s.file_path, s.is_preset
+                   s.release_date, s.duration, s.file_path, s.file_pathImg, s.is_preset
             FROM SongsTbl s
             LEFT JOIN HiddenPresetSongs h
                    ON h.song_id = s.song_id
@@ -115,6 +127,7 @@ namespace WinFormsApp7
                             : reader.GetDateTime("release_date"),
                         Duration = reader.IsDBNull(reader.GetOrdinal("duration")) ? "N/A" : reader.GetString("duration"),
                         FilePath = reader.IsDBNull(reader.GetOrdinal("file_path")) ? "" : reader.GetString("file_path"),
+                        CoverPath = reader.IsDBNull(reader.GetOrdinal("file_pathImg")) ? "" : reader.GetString("file_pathImg"),
                         IsPreset = reader.GetBoolean("is_preset")
                     };
 
@@ -198,7 +211,7 @@ namespace WinFormsApp7
             txtLanguage.Text = song.Language;
             lblDuration.Text = song.Duration;
 
-
+            LoadCoverArt(song);
             dtpReleaseDate.Visible = true;
             dtpReleaseDate.Format = DateTimePickerFormat.Custom;
 
@@ -218,7 +231,32 @@ namespace WinFormsApp7
             SetEditMode(false);
             btnPlayPause.Enabled = true;
         }
+        private string GetUsername(int userId)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
 
+                string sql = "SELECT Username FROM UserTbl WHERE UserID = @id";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@id", userId);
+
+                var result = cmd.ExecuteScalar();
+                return result?.ToString() ?? "Unknown";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+        private void toolbartracker()
+        {
+            toolStripLabel2.Text = $"Logged in as: {GetUsername(Session.CurrentUserId)}";
+            toolStripLabel2.ForeColor = Color.White;
+            toolStripLabel1.Text = $"Total Tracks: {flowPanel.Controls.Count}";
+            toolStripLabel1.ForeColor = Color.White;
+        }
         private void SetEditMode(bool editing)
         {
             lblTrack.ReadOnly = !editing;
@@ -299,10 +337,10 @@ namespace WinFormsApp7
                 conn.Open();
 
                 string sql = @"
-            INSERT INTO SongsTbl 
-                (user_id, title, artist, album, genre, duration, file_path, is_preset)
-            VALUES 
-                (@uid, @title, @artist, @album, @genre, @duration, @filepath, 0)";
+                INSERT INTO SongsTbl 
+                    (user_id, title, artist, album, genre, duration, file_path, is_preset)
+                VALUES 
+                    (@uid, @title, @artist, @album, @genre, @duration, @filepath, 0)";
 
                 using var cmd = new MySqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
@@ -385,8 +423,8 @@ namespace WinFormsApp7
                     // 1. Copy to archiveTBL
                     string insertSql = @"
                     INSERT INTO archiveTBL 
-                        (song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path)
-                    SELECT song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path
+                        (song_id, user_id, title, artist, album, genre, language, releasedate, duration, file_path, file_pathImg)
+                    SELECT song_id, user_id, title, artist, album, genre, language, release_date, duration, file_path, file_pathImg
                     FROM   SongsTbl
                     WHERE  song_id = @id";
 
@@ -428,6 +466,7 @@ namespace WinFormsApp7
         #region Play/Pause Buttons
         private void btnPlayPause_Click(object sender, EventArgs e)
         {
+
             if (_selectedSong == null)
             {
                 MessageBox.Show("Please select a song first.", "No Song Selected",
@@ -453,6 +492,7 @@ namespace WinFormsApp7
                     if (outputDevice.PlaybackState == PlaybackState.Playing)
                     {
                         outputDevice.Pause();
+                        trackpad.Stop();
                         btnPlayPause.Text = "▶";
                         return;
                     }
@@ -460,6 +500,7 @@ namespace WinFormsApp7
                     if (outputDevice.PlaybackState == PlaybackState.Paused)
                     {
                         outputDevice.Play();
+                        trackpad.Start();
                         btnPlayPause.Text = "⏸";
                         return;
                     }
@@ -472,6 +513,7 @@ namespace WinFormsApp7
                 outputDevice.Init(audioFile);
                 outputDevice.PlaybackStopped += OutputDevice_PlaybackStopped;
                 outputDevice.Play();
+                trackpad.Start();
 
                 _currentlyPlayingSong = _selectedSong;
                 btnPlayPause.Text = "⏸";
@@ -493,7 +535,25 @@ namespace WinFormsApp7
 
             return Path.Combine(AppConfig.SongsFolder, song.FilePath);
         }
+        private void trackBar_MouseDown(object sender, MouseEventArgs e)
+        {
+            _isDragging = true; // pause timer updates while dragging
+        }
 
+        private void trackBar_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (audioFile == null) { _isDragging = false; return; }
+
+            audioFile.CurrentTime = TimeSpan.FromSeconds(trackBar.Value);
+            _isDragging = false; // resume timer
+        }
+
+        // Replace your empty trackBar_Scroll with this
+        private void trackBar_Scroll(object sender, EventArgs e)
+        {
+            // Optional: show current time while dragging
+            // lblCurrentTime.Text = TimeSpan.FromSeconds(trackBar.Value).ToString(@"m\:ss");
+        }
         //Cleanup helper
         private void StopAndDisposeAudio()
         {
@@ -501,6 +561,7 @@ namespace WinFormsApp7
             {
                 outputDevice.PlaybackStopped -= OutputDevice_PlaybackStopped;
                 outputDevice.Stop();
+                trackpad.Stop();
                 outputDevice.Dispose();
                 outputDevice = null;
             }
@@ -512,6 +573,11 @@ namespace WinFormsApp7
             }
 
             _currentlyPlayingSong = null;
+            //reset trackbar
+            if (trackBar.InvokeRequired)
+                trackBar.Invoke(new Action(() => trackBar.Value = 0));
+            else
+                trackBar.Value = 0;
         }
 
         //When the song finishes naturally, reset the button
@@ -563,6 +629,7 @@ namespace WinFormsApp7
             }
 
             SetEditMode(true);
+            picNowPlaying.Enabled = true;
             dtpReleaseDate.Format = DateTimePickerFormat.Short;
             txtArtist.Focus();
         }
@@ -595,7 +662,7 @@ namespace WinFormsApp7
             string album = txtAlbum.Text.Trim();
             string genre = txtGenre.Text.Trim();
             string language = txtLanguage.Text.Trim();
-
+            picNowPlaying.Enabled = false;
 
 
             if (string.IsNullOrWhiteSpace(title))
@@ -670,12 +737,7 @@ namespace WinFormsApp7
         }
         #endregion
 
-        private void archivedBtn_Click(object sender, EventArgs e)
-        {
-            var archiveForm = new archiveForm();
-            archiveForm.Show();
-            this.Hide();
-        }
+
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -685,6 +747,112 @@ namespace WinFormsApp7
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void picNowPlaying_Click(object sender, EventArgs e)
+        {
+            if (_selectedSong == null || _selectedSong.IsPreset) return;
+
+            using var dialog = new OpenFileDialog
+            {
+                Title = "Select Cover Art",
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp|All Files|*.*"
+            };
+
+            if (dialog.ShowDialog() != DialogResult.OK) return;
+
+            string ext = Path.GetExtension(dialog.FileName);
+            string newFileName = $"cover_{Session.CurrentUserId}_{Guid.NewGuid()}{ext}";
+            string destPath = Path.Combine(AppConfig.songCoverImg, newFileName);
+
+            try
+            {
+                // 1. Save image file
+                Directory.CreateDirectory(AppConfig.songCoverImg);
+                System.IO.File.Copy(dialog.FileName, destPath);
+
+                // 2. Update DB
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
+
+                string sql = "UPDATE SongsTbl SET file_pathImg = @cover WHERE song_id = @id AND user_id = @uid";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@cover", newFileName);
+                cmd.Parameters.AddWithValue("@id", _selectedSong.SongId);
+                cmd.Parameters.AddWithValue("@uid", Session.CurrentUserId);
+                cmd.ExecuteNonQuery();
+
+                // 3. Update local object + refresh picturebox
+                _selectedSong.CoverPath = newFileName;
+                LoadCoverArt(_selectedSong);
+
+                MessageBox.Show("Cover art updated!", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set cover:\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+        private void LoadCoverArt(SongRow song)
+        {
+            // No song or no cover → clear picturebox
+            if (song == null || string.IsNullOrWhiteSpace(song.CoverPath))
+            {
+                picNowPlaying.Image = null;
+                picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
+                return;
+            }
+
+            string fullPath = song.IsPreset
+                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "songCoverImg", song.CoverPath)
+                : Path.Combine(AppConfig.songCoverImg, song.CoverPath);
+            if (!System.IO.File.Exists(fullPath))
+            {
+                picNowPlaying.Image = null;
+                return;
+            }
+
+            try
+            {
+                using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+                picNowPlaying.Image = Image.FromStream(stream);
+                picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
+            }
+            catch
+            {
+                picNowPlaying.Image = null;
+            }
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            StopAndDisposeAudio();
+            var archiveForm = new archiveForm();
+            archiveForm.Show();
+
+            this.Hide();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you want to log out?", "Confirm Logout",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (DialogResult.Yes == result)
+            {
+                StopAndDisposeAudio();
+                Session.CurrentUserId = -1; // Reset session
+                var loginForm = new LoginForm();
+                loginForm.Show();
+                this.Hide();
+            }
         }
     }
 }

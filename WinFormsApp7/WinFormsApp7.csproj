@@ -163,4 +163,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="songCoverImg\" />
+  </ItemGroup>
+
 </Project>

@@ -19,8 +19,9 @@ namespace WinFormsApp7
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             panelTop = new Panel();
-            archivedBtn = new Button();
             btnTest = new Button();
             lblLogo = new Label();
             txtSearch = new TextBox();
@@ -67,41 +68,37 @@ namespace WinFormsApp7
             txtCrudDate = new TextBox();
             btnCrudSave = new Button();
             btnCrudCancel = new Button();
+            trackpad = new System.Windows.Forms.Timer(components);
+            openFileDialog1 = new OpenFileDialog();
+            toolStrip1 = new ToolStrip();
+            toolStripButton3 = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripButton2 = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripButton1 = new ToolStripButton();
+            toolStripLabel1 = new ToolStripLabel();
+            toolStripLabel2 = new ToolStripLabel();
+            toolStripSeparator3 = new ToolStripSeparator();
             panelTop.SuspendLayout();
             panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNowPlaying).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
             panelCrud.SuspendLayout();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // panelTop
             // 
             panelTop.BackColor = Color.FromArgb(26, 27, 50);
-            panelTop.Controls.Add(archivedBtn);
             panelTop.Controls.Add(btnTest);
             panelTop.Controls.Add(lblLogo);
             panelTop.Controls.Add(txtSearch);
             panelTop.Controls.Add(btnSearch);
             panelTop.Controls.Add(btnAddTrack);
-            panelTop.Location = new Point(0, 0);
+            panelTop.Location = new Point(2, 26);
             panelTop.Name = "panelTop";
             panelTop.Size = new Size(1160, 55);
             panelTop.TabIndex = 0;
-            // 
-            // archivedBtn
-            // 
-            archivedBtn.BackColor = Color.DarkOrange;
-            archivedBtn.FlatAppearance.BorderSize = 0;
-            archivedBtn.FlatStyle = FlatStyle.Flat;
-            archivedBtn.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
-            archivedBtn.ForeColor = Color.White;
-            archivedBtn.Location = new Point(865, 12);
-            archivedBtn.Name = "archivedBtn";
-            archivedBtn.Size = new Size(110, 30);
-            archivedBtn.TabIndex = 31;
-            archivedBtn.Text = "Archived Songs";
-            archivedBtn.UseVisualStyleBackColor = false;
-            archivedBtn.Click += archivedBtn_Click;
             // 
             // btnTest
             // 
@@ -177,7 +174,7 @@ namespace WinFormsApp7
             // 
             panelLeft.AutoScroll = true;
             panelLeft.BackColor = Color.FromArgb(40, 42, 74);
-            panelLeft.Location = new Point(30, 65);
+            panelLeft.Location = new Point(30, 87);
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(784, 600);
             panelLeft.TabIndex = 1;
@@ -204,7 +201,7 @@ namespace WinFormsApp7
             panelRight.Controls.Add(lblReleaseDate);
             panelRight.Controls.Add(trackBar);
             panelRight.Controls.Add(btnPlayPause);
-            panelRight.Location = new Point(839, 65);
+            panelRight.Location = new Point(838, 87);
             panelRight.Name = "panelRight";
             panelRight.Size = new Size(291, 600);
             panelRight.TabIndex = 2;
@@ -369,12 +366,14 @@ namespace WinFormsApp7
             // picNowPlaying
             // 
             picNowPlaying.BackColor = Color.FromArgb(70, 73, 110);
+            picNowPlaying.Enabled = false;
             picNowPlaying.Location = new Point(15, 72);
             picNowPlaying.Name = "picNowPlaying";
             picNowPlaying.Size = new Size(253, 160);
             picNowPlaying.SizeMode = PictureBoxSizeMode.StretchImage;
             picNowPlaying.TabIndex = 1;
             picNowPlaying.TabStop = false;
+            picNowPlaying.Click += picNowPlaying_Click;
             // 
             // lblArtist
             // 
@@ -423,7 +422,6 @@ namespace WinFormsApp7
             // trackBar
             // 
             trackBar.BackColor = Color.FromArgb(40, 42, 74);
-            trackBar.Enabled = false;
             trackBar.Location = new Point(15, 406);
             trackBar.Maximum = 265;
             trackBar.Name = "trackBar";
@@ -431,6 +429,9 @@ namespace WinFormsApp7
             trackBar.TabIndex = 14;
             trackBar.TickStyle = TickStyle.None;
             trackBar.Value = 133;
+            trackBar.Scroll += trackBar_Scroll;
+            trackBar.MouseDown += trackBar_MouseDown;
+            trackBar.MouseUp += trackBar_MouseUp;
             // 
             // btnPlayPause
             // 
@@ -692,10 +693,101 @@ namespace WinFormsApp7
             btnCrudCancel.Text = "✕ Cancel";
             btnCrudCancel.UseVisualStyleBackColor = false;
             // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.BackColor = Color.Transparent;
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripSeparator1, toolStripButton2, toolStripSeparator2, toolStripButton1, toolStripLabel1, toolStripLabel2, toolStripSeparator3 });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(1158, 25);
+            toolStrip1.TabIndex = 4;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Enabled = false;
+            toolStripButton3.ForeColor = SystemColors.ControlLight;
+            toolStripButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton3.Size = new Size(97, 22);
+            toolStripButton3.Text = "Library";
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.AutoSize = false;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Padding = new Padding(50, 0, 0, 0);
+            toolStripSeparator1.Size = new Size(6, 25);
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.AutoSize = false;
+            toolStripButton2.BackColor = Color.DarkOrange;
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton2.ForeColor = SystemColors.ControlLight;
+            toolStripButton2.Image = (System.Drawing.Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton2.Size = new Size(106, 22);
+            toolStripButton2.Text = "Archives";
+            toolStripButton2.Click += toolStripButton2_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.AutoSize = false;
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Padding = new Padding(50, 0, 0, 0);
+            toolStripSeparator2.Size = new Size(6, 25);
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.BackColor = Color.Red;
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.ForeColor = SystemColors.ControlLight;
+            toolStripButton1.ImageScaling = ToolStripItemImageScaling.None;
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Padding = new Padding(50, 0, 0, 0);
+            toolStripButton1.Size = new Size(99, 22);
+            toolStripButton1.Text = "Logout";
+            toolStripButton1.Click += toolStripButton1_Click;
+            // 
+            // toolStripLabel1
+            // 
+            toolStripLabel1.Alignment = ToolStripItemAlignment.Right;
+            toolStripLabel1.AutoSize = false;
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new Size(200, 22);
+            toolStripLabel1.Text = "toolStripLabel1";
+            toolStripLabel1.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripLabel2
+            // 
+            toolStripLabel2.Alignment = ToolStripItemAlignment.Right;
+            toolStripLabel2.AutoSize = false;
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new Size(200, 22);
+            toolStripLabel2.Text = "toolStripLabel2";
+            toolStripLabel2.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 25);
+            // 
             // MainForm
             // 
             BackColor = Color.FromArgb(26, 27, 50);
-            ClientSize = new Size(1158, 677);
+            ClientSize = new Size(1158, 718);
+            Controls.Add(toolStrip1);
             Controls.Add(panelTop);
             Controls.Add(panelLeft);
             Controls.Add(panelRight);
@@ -715,7 +807,10 @@ namespace WinFormsApp7
             ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
             panelCrud.ResumeLayout(false);
             panelCrud.PerformLayout();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -774,6 +869,16 @@ namespace WinFormsApp7
         private TextBox txtLanguage;
         private Label lblLanguage;
         private TextBox lblTrack;
-        private Button archivedBtn;
+        private System.Windows.Forms.Timer trackpad;
+        private OpenFileDialog openFileDialog1;
+        private ToolStrip toolStrip1;
+        private ToolStripLabel toolStripLabel1;
+        private ToolStripLabel toolStripLabel2;
+        private ToolStripButton toolStripButton3;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton toolStripButton2;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton toolStripButton1;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }

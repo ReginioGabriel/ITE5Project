@@ -16,7 +16,7 @@ namespace WinFormsApp7
         public archiveForm()
         {
             InitializeComponent();
-            
+
             _searchTimer.Interval = 400;
             _searchTimer.Tick += (s, e) =>
             {
@@ -26,6 +26,7 @@ namespace WinFormsApp7
             Session.CurrentUserId = 1;
             LoadTracks();
             StyleGrid();
+            toolbartracker();
         }
         private int GetSelectedArchiveId()
         {
@@ -92,6 +93,7 @@ namespace WinFormsApp7
                genre        AS 'Genre',
                duration     AS 'Duration',
                file_path    AS 'Filepath',
+               file_pathImg AS 'Image Filepath',
                archived_at  AS 'Archived On'
         FROM   archiveTBL  
         WHERE  user_id = @uid
@@ -108,7 +110,7 @@ namespace WinFormsApp7
 
                 var dt = new DataTable();
                 new MySqlDataAdapter(cmd).Fill(dt);
-                
+
                 dataGridView1.DataSource = dt;
 
                 // Show empty message
@@ -235,13 +237,6 @@ namespace WinFormsApp7
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var test = new MainForm();
-            test.Show();
-            this.Hide();
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
             dataGridView1.SelectAll();
@@ -253,9 +248,51 @@ namespace WinFormsApp7
             _searchTimer.Start();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            var test = new MainForm();
+            test.Show();
+            this.Hide();
+        }
 
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you want to log out?", "Confirm Logout",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (DialogResult.Yes == result)
+            {
+                
+                Session.CurrentUserId = -1; // Reset session
+                var loginForm = new LoginForm();
+                loginForm.Show();
+                this.Hide();
+            }
+        }
+        private string GetUsername(int userId)
+        {
+            try
+            {
+                using var conn = new MySqlConnection(connString);
+                conn.Open();
+
+                string sql = "SELECT Username FROM UserTbl WHERE UserID = @id";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@id", userId);
+
+                var result = cmd.ExecuteScalar();
+                return result?.ToString() ?? "Unknown";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+        private void toolbartracker()
+        {
+            toolStripLabel2.Text = $"Logged in as: {GetUsername(Session.CurrentUserId)}";
+            toolStripLabel2.ForeColor = Color.White;
+            toolStripLabel1.Text = $"Total Archived Songs: {dataGridView1.Rows.Count}";
+            toolStripLabel1.ForeColor = Color.White;
         }
     }
 }
