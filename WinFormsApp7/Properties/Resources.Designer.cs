@@ -63,26 +63,6 @@ namespace WinFormsApp7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _44748_439982672 {
-            get {
-                object obj = ResourceManager.GetObject("44748-439982672", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _672919195_2165170284268995_7824588291765910815_n {
-            get {
-                object obj = ResourceManager.GetObject("672919195_2165170284268995_7824588291765910815_n", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap asteroid {
             get {
                 object obj = ResourceManager.GetObject("asteroid", resourceCulture);
@@ -93,9 +73,9 @@ namespace WinFormsApp7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap cadence_24dp_000000_FILL0_wght400_GRAD0_opsz24 {
+        internal static System.Drawing.Bitmap logo {
             get {
-                object obj = ResourceManager.GetObject("cadence_24dp_000000_FILL0_wght400_GRAD0_opsz24", resourceCulture);
+                object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,29 +83,9 @@ namespace WinFormsApp7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap encrypted_24dp_000000_FILL0_wght400_GRAD0_opsz24 {
+        internal static System.Drawing.Bitmap logo_1 {
             get {
-                object obj = ResourceManager.GetObject("encrypted_24dp_000000_FILL0_wght400_GRAD0_opsz24", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap icon_logo1 {
-            get {
-                object obj = ResourceManager.GetObject("icon_logo1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap person_24dp_000000_FILL0_wght400_GRAD0_opsz24 {
-            get {
-                object obj = ResourceManager.GetObject("person_24dp_000000_FILL0_wght400_GRAD0_opsz24", resourceCulture);
+                object obj = ResourceManager.GetObject("logo 1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

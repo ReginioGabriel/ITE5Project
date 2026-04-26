@@ -32,195 +32,159 @@
             btnSignUp = new Button();
             btnLogin = new Button();
             txtUsername = new TextBox();
-            txtPassword = new TextBox();
-            label1 = new Label();
-            panel1 = new Panel();
-            pictureBox1 = new PictureBox();
             label2 = new Label();
-            panel2 = new Panel();
-            pictureBox4 = new PictureBox();
-            pictureBox3 = new PictureBox();
+            label3 = new Label();
+            txtPassword = new TextBox();
+            pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
-            panel1.SuspendLayout();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // btntest
             // 
-            btntest.Location = new Point(583, 345);
+            btntest.Location = new Point(1085, 12);
             btntest.Name = "btntest";
             btntest.Size = new Size(87, 27);
             btntest.TabIndex = 3;
             btntest.Text = "Test Connection";
             btntest.UseVisualStyleBackColor = true;
-            btntest.Click += btntest_Click;
+            btntest.Click += label1_Click;
             // 
             // btnSignUp
             // 
-            btnSignUp.Location = new Point(25, 164);
+            btnSignUp.BackColor = Color.Yellow;
+            btnSignUp.FlatStyle = FlatStyle.Flat;
+            btnSignUp.Font = new Font("Franklin Gothic Medium Cond", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSignUp.ForeColor = SystemColors.ActiveCaptionText;
+            btnSignUp.Location = new Point(469, 440);
             btnSignUp.Name = "btnSignUp";
-            btnSignUp.Size = new Size(79, 26);
+            btnSignUp.Size = new Size(242, 31);
             btnSignUp.TabIndex = 4;
             btnSignUp.Text = "Sign Up";
-            btnSignUp.UseVisualStyleBackColor = true;
+            btnSignUp.UseVisualStyleBackColor = false;
             btnSignUp.Click += btnSignUp_Click;
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(137, 164);
+            btnLogin.BackColor = Color.FromArgb(192, 0, 0);
+            btnLogin.FlatStyle = FlatStyle.Flat;
+            btnLogin.Font = new Font("Franklin Gothic Medium Cond", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLogin.Location = new Point(469, 493);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(79, 26);
+            btnLogin.Size = new Size(242, 33);
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Login";
-            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(39, 65);
+            txtUsername.BackColor = Color.FromArgb(28, 32, 65);
+            txtUsername.BorderStyle = BorderStyle.FixedSingle;
+            txtUsername.Font = new Font("Franklin Gothic Medium Cond", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtUsername.ForeColor = SystemColors.Window;
+            txtUsername.Location = new Point(469, 307);
             txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(177, 21);
+            txtUsername.Size = new Size(242, 29);
             txtUsername.TabIndex = 6;
-            txtUsername.Text = "Username";
             txtUsername.TextChanged += txtUsername_TextChanged;
-            // 
-            // txtPassword
-            // 
-            txtPassword.Location = new Point(39, 117);
-            txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(177, 21);
-            txtPassword.TabIndex = 7;
-            txtPassword.Text = "Password";
-            // 
-            // label1
-            // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = SystemColors.Highlight;
-            label1.Location = new Point(39, 17);
-            label1.Name = "label1";
-            label1.Size = new Size(153, 25);
-            label1.TabIndex = 8;
-            label1.Text = "Sign Up or Login";
-            label1.Click += label1_Click;
-            // 
-            // panel1
-            // 
-            panel1.BackColor = Color.Transparent;
-            panel1.BackgroundImage = Properties.Resources._44748_439982672;
-            panel1.Controls.Add(pictureBox1);
-            panel1.Controls.Add(label2);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(682, 42);
-            panel1.TabIndex = 9;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.BackgroundImageLayout = ImageLayout.Zoom;
-            pictureBox1.Image = Properties.Resources.icon_logo1;
-            pictureBox1.Location = new Point(12, 9);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(27, 24);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 10;
-            pictureBox1.TabStop = false;
-            pictureBox1.Click += pictureBox1_Click;
             // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
-            label2.FlatStyle = FlatStyle.Flat;
-            label2.Font = new Font("Papyrus", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.Black;
-            label2.Location = new Point(49, 9);
+            label2.BackColor = Color.Transparent;
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.ForeColor = SystemColors.HighlightText;
+            label2.Location = new Point(469, 283);
             label2.Name = "label2";
-            label2.Size = new Size(93, 24);
+            label2.Size = new Size(87, 21);
             label2.TabIndex = 10;
-            label2.Text = "Spoti Play";
-            label2.Click += label2_Click;
+            label2.Text = "Username";
             // 
-            // panel2
+            // label3
             // 
-            panel2.BackColor = Color.Transparent;
-            panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(pictureBox4);
-            panel2.Controls.Add(pictureBox3);
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(txtUsername);
-            panel2.Controls.Add(btnSignUp);
-            panel2.Controls.Add(btnLogin);
-            panel2.Controls.Add(txtPassword);
-            panel2.Location = new Point(60, 92);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(239, 221);
-            panel2.TabIndex = 10;
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.ForeColor = SystemColors.HighlightText;
+            label3.Location = new Point(469, 354);
+            label3.Name = "label3";
+            label3.Size = new Size(82, 21);
+            label3.TabIndex = 12;
+            label3.Text = "Password";
             // 
-            // pictureBox4
+            // txtPassword
             // 
-            pictureBox4.Image = Properties.Resources.encrypted_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            pictureBox4.Location = new Point(9, 114);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(24, 24);
-            pictureBox4.SizeMode = PictureBoxSizeMode.AutoSize;
-            pictureBox4.TabIndex = 10;
-            pictureBox4.TabStop = false;
+            txtPassword.BackColor = Color.FromArgb(28, 32, 65);
+            txtPassword.BorderStyle = BorderStyle.FixedSingle;
+            txtPassword.Font = new Font("Franklin Gothic Medium Cond", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtPassword.ForeColor = SystemColors.Window;
+            txtPassword.Location = new Point(469, 378);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(242, 29);
+            txtPassword.TabIndex = 11;
             // 
-            // pictureBox3
+            // pictureBox1
             // 
-            pictureBox3.Image = Properties.Resources.person_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            pictureBox3.Location = new Point(9, 62);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(24, 24);
-            pictureBox3.SizeMode = PictureBoxSizeMode.AutoSize;
-            pictureBox3.TabIndex = 9;
-            pictureBox3.TabStop = false;
+            pictureBox1.Image = Properties.Resources.logo;
+            pictureBox1.Location = new Point(540, 88);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(120, 64);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 13;
+            pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
-            pictureBox2.BackColor = Color.Transparent;
-            pictureBox2.Dock = DockStyle.Fill;
-            pictureBox2.Image = Properties.Resources._44748_439982672;
-            pictureBox2.Location = new Point(0, 0);
+            pictureBox2.Image = Properties.Resources.logo_1;
+            pictureBox2.Location = new Point(530, 158);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(682, 384);
+            pictureBox2.Size = new Size(143, 79);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 11;
+            pictureBox2.TabIndex = 14;
             pictureBox2.TabStop = false;
-            pictureBox2.Click += pictureBox2_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Franklin Gothic Heavy", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = SystemColors.ButtonFace;
+            label1.Location = new Point(499, 170);
+            label1.Name = "label1";
+            label1.Size = new Size(108, 21);
+            label1.TabIndex = 15;
+            label1.Text = "WELCOME TO";
             // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(6F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(682, 384);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
-            Controls.Add(btntest);
+            BackColor = Color.FromArgb(28, 32, 61);
+            ClientSize = new Size(1184, 660);
+            Controls.Add(label1);
             Controls.Add(pictureBox2);
+            Controls.Add(pictureBox1);
+            Controls.Add(label3);
+            Controls.Add(txtPassword);
+            Controls.Add(label2);
+            Controls.Add(btnLogin);
+            Controls.Add(btnSignUp);
+            Controls.Add(txtUsername);
+            Controls.Add(btntest);
             Font = new Font("Franklin Gothic Medium Cond", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "LoginForm";
             ShowIcon = false;
             Text = "Form2";
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            Load += LoginForm_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -229,14 +193,11 @@
         private Button btnSignUp;
         private Button btnLogin;
         private TextBox txtUsername;
-        private TextBox txtPassword;
-        private Label label1;
-        private Panel panel1;
         private Label label2;
+        private Label label3;
+        private TextBox txtPassword;
         private PictureBox pictureBox1;
-        private Panel panel2;
         private PictureBox pictureBox2;
-        private PictureBox pictureBox4;
-        private PictureBox pictureBox3;
+        private Label label1;
     }
 }

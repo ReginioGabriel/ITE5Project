@@ -20,7 +20,7 @@ namespace WinFormsApp7
             InitializeComponent();
         }
 
-        private void btntest_Click(object sender, EventArgs e)
+        private void label1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -165,11 +165,6 @@ namespace WinFormsApp7
 
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void label2_Click(object sender, EventArgs e)
         {
 
@@ -181,6 +176,11 @@ namespace WinFormsApp7
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
         {
 
         }

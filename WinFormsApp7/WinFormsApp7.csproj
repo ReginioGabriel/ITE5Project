@@ -9,7 +9,132 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Guna.UI2.WinForms" Version="2.0.4.7" />
+    <None Remove="presets\Baka_Bukas.mp3" />
+    <None Remove="presets\Bibingka.mp3" />
+    <None Remove="presets\Bihag.mp3" />
+    <None Remove="presets\Diwa.mp3" />
+    <None Remove="presets\Gazebo.mp3" />
+    <None Remove="presets\Happy_Ending.mp3" />
+    <None Remove="presets\Isang_Daang_Porsyento.mp3" />
+    <None Remove="presets\Isa_lang.mp3" />
+    <None Remove="presets\Isip.mp3" />
+    <None Remove="presets\Janice.mp3" />
+    <None Remove="presets\Kalachuchi %28Remastered%29.mp3" />
+    <None Remove="presets\Kalapastangan.mp3" />
+    <None Remove="presets\LASIK.mp3" />
+    <None Remove="presets\Lifetime %28Reimagined%29.mp3" />
+    <None Remove="presets\Maria_Clara.mp3" />
+    <None Remove="presets\Miss_Mosh.mp3" />
+    <None Remove="presets\Misteryoso.mp3" />
+    <None Remove="presets\Multo.mp3" />
+    <None Remove="presets\Nangangamba.mp3" />
+    <None Remove="presets\Nilalang.mp3" />
+    <None Remove="presets\Pag-Ibig_ay_Kanibalismo_II.mp3" />
+    <None Remove="presets\Pahingi_Ako_Ng_Kiss.mp3" />
+    <None Remove="presets\Panaginip.mp3" />
+    <None Remove="presets\Saan_Kakapit.mp3" />
+    <None Remove="presets\Sagip.mp3" />
+    <None Remove="presets\Sumpa.mp3" />
+    <None Remove="presets\Tanaw.mp3" />
+    <None Remove="presets\Tindahan_Ng_Mga_Alaala.mp3" />
+    <None Remove="presets\Umaasa.mp3" />
+    <None Remove="presets\Waltz_Of_Four_Left_Feet.mp3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="presets\Baka_Bukas.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Bibingka.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Bihag.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Diwa.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Gazebo.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Happy_Ending.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Isang_Daang_Porsyento.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Isa_lang.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Isip.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Janice.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Kalachuchi (Remastered).mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Kalapastangan.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\LASIK.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Lifetime (Reimagined).mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Maria_Clara.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Miss_Mosh.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Misteryoso.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Multo.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Nangangamba.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Nilalang.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Pag-Ibig_ay_Kanibalismo_II.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Pahingi_Ako_Ng_Kiss.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Panaginip.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Saan_Kakapit.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Sagip.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Sumpa.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Tanaw.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Tindahan_Ng_Mga_Alaala.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Umaasa.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="presets\Waltz_Of_Four_Left_Feet.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.6.0" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
     <PackageReference Include="NAudio" Version="2.3.0" />
@@ -21,17 +146,6 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\MySQL\MySQL Connector NET 9.6\MySql.Data.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-    <ItemGroup>
-	    <Compile Update="MainForm.cs">
-		    <SubType>Form</SubType>
-	    </Compile>
-	    <Compile Update="MainForm.Designer.cs">
-		    <DesignTime>True</DesignTime>
-		    <AutoGen>True</AutoGen>
-		    <DependentUpon>MainForm.cs</DependentUpon>
-	    </Compile>
-    </ItemGroup>
 
 
 	<ItemGroup>
